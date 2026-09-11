@@ -45,7 +45,7 @@ footer{padding:28px 0 45px;color:#71859b;font-size:13px;border-top:1px solid rgb
 <div class="wrap">
 <nav>
 <div class="brand">LeverandørVagt</div>
-<div class="pill">Validation prototype · e-conomic</div>
+<div class="pill">Early access · e-conomic</div>
 </nav>
 
 <main>
@@ -119,14 +119,14 @@ Historik: 31 tidligere fakturaer<br>
 <section>
 <div class="grid2">
 <div>
-<div class="eyebrow">Validation price</div>
-<h2>Prisen vi vil teste med markedet</h2>
+<div class="eyebrow">Pilotpris</div>
+<h2>En professionel risikomonitor til hele klientporteføljen</h2>
 <div class="price">2.499 DKK <small>/ måned ekskl. moms</small></div>
-<p class="lead" style="font-size:17px">Pris for regnskabskontoret. Ingen setup-fee i valideringstilbuddet. Det endelige klientloft fastlægges først efter pilotfeedback.</p>
+<p class="lead" style="font-size:17px">Pris for regnskabskontoret. Ingen setup-fee. Pilotadgang gives til et begrænset antal kontorer, så vi kan sikre præcise signaler og en rolig onboarding.</p>
 </div>
 <div class="card">
-<h3>Hvorfor denne pris?</h3>
-<p>Vi tester, om problemet er værdifuldt nok til et professionelt B2B-produkt. Hvis markedet kun vil betale et lavt beløb, bliver produktet ikke bygget.</p>
+<h3>Hvad er inkluderet?</h3>
+<p>Porteføljeoverblik, leverandørhistorik, de fem kernesignaler, daglig risikorapport og e-mail alerts. V1 er read-only og ændrer ikke kundernes bogføring.</p>
 </div>
 </div>
 </section>
@@ -134,17 +134,24 @@ Historik: 31 tidligere fakturaer<br>
 <section id="pilot">
 <div class="grid2">
 <div>
-<div class="eyebrow">Pilot-intention</div>
-<h2>Ville du betale for dette, hvis det leverer disse signaler pålideligt?</h2>
-<p class="lead" style="font-size:17px">Denne side er en markedsvalidering. Der modtages ingen betaling nu. Målet er at afgøre, om produktet skal bygges.</p>
+<div class="eyebrow">Pilotadgang</div>
+<h2>Anmod om adgang til den første pilot</h2>
+<p class="lead" style="font-size:17px">Vi åbner den første pilot for et begrænset antal bogholder- og revisionskontorer, der arbejder aktivt med e-conomic. Ingen betaling opkræves, før en pilot er aftalt og klar.</p>
+<div class="card" style="margin-top:18px">
+<h3>Et godt pilotmatch er typisk et kontor, der:</h3>
+<p>• administrerer flere e-conomic-klienter<br><br>• ønsker færre manuelle kontroltrin<br><br>• vil opdage usædvanlige leverandør- og fakturamønstre tidligere<br><br>• kan give konkret feedback på signalernes kvalitet</p>
+</div>
 </div>
 <div class="formbox">
+<h3 style="margin-top:0">Request pilot access</h3>
+<p class="note" style="margin-top:0">Udfyld felterne, kopiér anmodningen og svar på den e-mail, hvor du modtog linket.</p>
 <label>Virksomhed</label><input id="company" placeholder="Eksempel Revision ApS">
+<label>Kontaktperson</label><input id="contact" placeholder="Navn">
 <label>Ca. antal e-conomic-klienter</label><select id="clients"><option>1–10</option><option>11–30</option><option>31–75</option><option>76–150</option><option>150+</option></select>
-<label>Ved 2.499 DKK/md. er din vurdering</label>
-<select id="intent"><option>Jeg ville ikke købe</option><option>Interessant, men for dyrt</option><option>Jeg vil se en pilot</option><option>Jeg vil sandsynligvis købe, hvis signalerne er præcise</option></select>
-<label>Hvad skal være sandt, før du vil betale?</label><textarea id="condition" rows="4"></textarea>
-<button onclick="copyIntent()">Kopiér pilot-feedback</button>
+<label>Hvad passer bedst?</label>
+<select id="intent"><option>Jeg vil gerne se en pilot</option><option>Jeg er interesseret, men vil afklare et par ting først</option><option>Jeg vil sandsynligvis bruge løsningen, hvis signalerne er præcise</option><option>Det er ikke relevant for os lige nu</option></select>
+<label>Hvad er vigtigst for jer i en pilot?</label><textarea id="condition" rows="4" placeholder="Fx få falske positiver, kontrol af ændrede betalingsoplysninger, dubletfakturaer ..."></textarea>
+<button onclick="copyIntent()">Kopiér pilotanmodning</button>
 <div id="msg" class="note"></div>
 </div>
 </div>
@@ -152,17 +159,18 @@ Historik: 31 tidligere fakturaer<br>
 </main>
 
 <footer>
-Validation prototype — ingen påstand om, at systemet forhindrer svindel. Det identificerer risikosignaler, som kræver menneskelig vurdering.
+LeverandørVagt — read-only risikomonitor til e-conomic. Systemet identificerer risikosignaler, som kræver menneskelig vurdering.
 </footer>
 </div>
 <script>
 function copyIntent(){
-  const text = `LeverandørVagt validation feedback
+  const text = `LeverandørVagt — pilotanmodning
 Virksomhed: ${document.getElementById('company').value}
+Kontaktperson: ${document.getElementById('contact').value}
 e-conomic-klienter: ${document.getElementById('clients').value}
-Prisreaktion: ${document.getElementById('intent').value}
-Krav for køb: ${document.getElementById('condition').value}`;
-  navigator.clipboard.writeText(text).then(()=>document.getElementById('msg').innerText='Feedback kopieret. Send den til den person, der gennemfører valideringen.');
+Interesse: ${document.getElementById('intent').value}
+Vigtigst i en pilot: ${document.getElementById('condition').value}`;
+  navigator.clipboard.writeText(text).then(()=>document.getElementById('msg').innerText='Pilotsvaret er kopieret. Indsæt det som svar i den e-mail, hvor du modtog linket.');
 }
 </script>
 </body>
