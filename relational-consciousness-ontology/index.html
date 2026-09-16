@@ -1,295 +1,74 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive structural visualization of Relational Consciousness Ontology">
-  <title>RCO — Relational State-Space Atlas</title>
+  <meta name="description" content="رحلة بصرية تفاعلية في أنطولوجيا الوعي العلائقي">
+  <title>RCO — رحلة الوجود العلائقي</title>
   <style>
-    :root {
-      --ink: #e9edf5;
-      --muted: #9ba8bb;
-      --deep: #080b14;
-      --panel: rgba(15, 21, 36, .86);
-      --panel2: rgba(23, 31, 52, .82);
-      --line: rgba(174, 193, 225, .14);
-      --aqua: #63e8d2;
-      --violet: #9780ff;
-      --amber: #ffbf6d;
-      --rose: #ff7da1;
-      --white: #f6f8ff;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100vh; color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 16% -8%, rgba(89, 103, 214, .28), transparent 34rem),
-        radial-gradient(circle at 88% 5%, rgba(28, 182, 164, .16), transparent 30rem),
-        var(--deep);
-    }
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-    .app { max-width: 1480px; margin: 0 auto; padding: 24px; }
-    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 20px; }
-    .eyebrow { margin: 0 0 7px; color: var(--aqua); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-    h1 { font-size: clamp(1.45rem, 3vw, 2.25rem); line-height: 1.06; margin: 0; letter-spacing: -.04em; font-weight: 650; }
-    .subtitle { max-width: 760px; margin: 9px 0 0; color: var(--muted); line-height: 1.55; font-size: .95rem; }
-    .status { display: flex; align-items: center; gap: 9px; color: var(--muted); white-space: nowrap; font-size: .82rem; padding-top: 5px; }
-    .status i { width: 9px; height: 9px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 14px var(--aqua); }
-    .shell { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; }
-    .atlas { min-height: 650px; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(circle at 50% 47%, rgba(47, 63, 118, .24), rgba(8, 11, 20, .34) 54%, rgba(2, 4, 9, .88)); }
-    #field { width: 100%; height: 100%; min-height: 650px; display: block; }
-    .field-label { position: absolute; left: 22px; top: 20px; pointer-events: none; }
-    .field-label strong { display: block; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
-    .field-label span { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; }
-    .phase-banner { position: absolute; left: 22px; bottom: 19px; max-width: min(550px, calc(100% - 44px)); pointer-events: none; }
-    .phase-banner h2 { margin: 0; font-size: 1.18rem; letter-spacing: -.025em; }
-    .phase-banner p { margin: 6px 0 0; color: #b8c4d8; line-height: 1.43; font-size: .86rem; }
-    .phase-banner em { color: var(--amber); font-style: normal; }
-    .node-tip { position: absolute; display: none; pointer-events: none; min-width: 172px; padding: 11px 12px; border: 1px solid rgba(99, 232, 210, .32); border-radius: 10px; background: rgba(4, 8, 17, .9); box-shadow: 0 14px 30px rgba(0,0,0,.28); font-size: .76rem; line-height: 1.45; }
-    .node-tip b { color: var(--aqua); }
-    .sidebar { display: grid; align-content: start; gap: 13px; }
-    .card { padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--panel); box-shadow: 0 14px 45px rgba(0,0,0,.15); }
-    .card h2 { margin: 0 0 12px; font-size: .78rem; letter-spacing: .11em; text-transform: uppercase; color: #c7d2e5; }
-    .phases { display: grid; grid-template-columns: 1fr; gap: 7px; }
-    .phase-button { display: grid; grid-template-columns: 28px 1fr; align-items: center; text-align: left; padding: 9px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--muted); transition: .18s ease; }
-    .phase-button:hover { color: var(--ink); background: rgba(151,128,255,.09); }
-    .phase-button.active { color: var(--white); background: rgba(99,232,210,.11); border-color: rgba(99,232,210,.24); }
-    .phase-number { color: var(--aqua); font-variant-numeric: tabular-nums; font-size: .75rem; }
-    .phase-name { font-size: .86rem; font-weight: 590; }
-    .controls { display: grid; gap: 12px; }
-    .control-label { display: flex; justify-content: space-between; gap: 12px; font-size: .78rem; color: var(--muted); }
-    .control-label output { color: var(--ink); font-variant-numeric: tabular-nums; }
-    input[type="range"] { width: 100%; accent-color: var(--aqua); margin: 8px 0 0; }
-    .transport { display: flex; gap: 8px; }
-    .transport button { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 9px; color: var(--ink); background: var(--panel2); font-size: .81rem; }
-    .transport button:hover { border-color: rgba(99,232,210,.4); }
-    .transport .play { background: var(--aqua); color: #06221f; border-color: transparent; font-weight: 700; }
-    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .metric { padding: 10px; border-radius: 10px; background: rgba(255,255,255,.035); }
-    .metric span { display: block; color: var(--muted); font-size: .68rem; letter-spacing: .07em; text-transform: uppercase; }
-    .metric b { display: block; margin-top: 4px; font-size: 1.15rem; font-weight: 620; font-variant-numeric: tabular-nums; }
-    .metric small { display: block; color: var(--muted); font-size: .68rem; margin-top: 2px; }
-    .legend { display: grid; gap: 8px; color: var(--muted); font-size: .76rem; line-height: 1.35; }
-    .legend div { display: grid; grid-template-columns: 13px 1fr; gap: 8px; align-items: start; }
-    .swatch { width: 9px; height: 9px; margin-top: 3px; border-radius: 50%; }
-    .notice { color: #bfcae0; font-size: .75rem; line-height: 1.45; }
-    .notice strong { color: var(--amber); }
-    .footer { margin-top: 12px; color: #7f8ca3; font-size: .74rem; line-height: 1.45; }
-    @media (max-width: 980px) { .shell { grid-template-columns: 1fr; } .sidebar { grid-template-columns: repeat(2, minmax(0,1fr)); } .sidebar .wide { grid-column: 1 / -1; } }
-    @media (max-width: 640px) { .app { padding: 14px; } .topbar { display: block; } .status { margin-top: 12px; } .atlas, #field { min-height: 510px; } .sidebar { grid-template-columns: 1fr; } .sidebar .wide { grid-column: auto; } .phase-banner p { font-size: .8rem; } }
+    :root{--bg:#070a12;--surface:#101624;--surface2:#151d2f;--ink:#eef2fb;--muted:#a6b0c4;--line:rgba(190,207,238,.16);--aqua:#67e4cf;--violet:#9e8bff;--amber:#ffc078;--rose:#ff8bab;--soft-aqua:rgba(103,228,207,.12);--soft-violet:rgba(158,139,255,.12)}
+    *{box-sizing:border-box} body{margin:0;min-width:320px;background:radial-gradient(circle at 85% 0,rgba(91,94,183,.2),transparent 28rem),radial-gradient(circle at 12% 12%,rgba(47,183,170,.12),transparent 26rem),var(--bg);color:var(--ink);font-family:Tahoma,"Segoe UI",Arial,sans-serif}
+    button,input{font:inherit} button{cursor:pointer}.app{max-width:1500px;margin:auto;padding:24px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}.eyebrow{margin:0 0 7px;color:var(--aqua);font-size:.75rem;font-weight:700;letter-spacing:.09em}.top h1{margin:0;font-size:clamp(1.65rem,3.2vw,2.7rem);line-height:1.08;letter-spacing:-.04em}.lead{max-width:800px;margin:9px 0 0;color:var(--muted);line-height:1.7;font-size:.96rem}.status{display:flex;gap:8px;align-items:center;white-space:nowrap;color:var(--muted);font-size:.8rem;padding-top:7px}.pulse{width:9px;height:9px;border-radius:50%;background:var(--aqua);box-shadow:0 0 16px var(--aqua)}
+    .epistemic{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:13px 15px;margin-bottom:16px;border:1px solid var(--line);border-radius:14px;background:rgba(14,20,34,.75);font-size:.83rem;line-height:1.55}.epistemic strong{color:var(--amber)}.tags{display:flex;gap:7px;flex-wrap:wrap}.tag{padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.72rem}.tag.source{border-color:rgba(103,228,207,.4);color:var(--aqua)}.tag.visual{border-color:rgba(158,139,255,.4);color:#c5baff}.tag.open{border-color:rgba(255,192,120,.42);color:var(--amber)}
+    .workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 310px;gap:15px;align-items:start}.panel{border:1px solid var(--line);border-radius:17px;background:rgba(14,20,34,.83);box-shadow:0 15px 45px rgba(0,0,0,.16)}.steps{padding:14px}.panel h2{margin:0 0 12px;font-size:.75rem;letter-spacing:.08em;color:#d7e0f1}.step-list{display:grid;gap:4px}.step{width:100%;display:grid;grid-template-columns:29px 1fr;gap:7px;align-items:center;text-align:right;padding:9px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted)}.step:hover{background:rgba(158,139,255,.08);color:var(--ink)}.step.active{border-color:rgba(103,228,207,.35);background:var(--soft-aqua);color:var(--ink)}.step-no{color:var(--aqua);font-size:.7rem;font-variant-numeric:tabular-nums}.step b{font-size:.82rem;font-weight:600}.step small{display:block;margin-top:2px;color:inherit;font-size:.69rem;opacity:.78}
+    .center{min-width:0}.modebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.modes{display:flex;gap:6px;flex-wrap:wrap}.mode{border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--surface);color:var(--muted);font-size:.78rem}.mode.active{border-color:transparent;background:var(--aqua);color:#06221e;font-weight:700}.progress-wrap{display:flex;gap:9px;align-items:center;color:var(--muted);font-size:.73rem;white-space:nowrap}.progress{width:105px;height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.progress i{display:block;height:100%;background:var(--aqua);border-radius:inherit;transition:width .25s ease}
+    .stage{position:relative;min-height:620px;overflow:hidden;border:1px solid var(--line);border-radius:19px;background:radial-gradient(circle at 50% 40%,rgba(53,65,130,.27),rgba(6,9,16,.5) 58%,rgba(1,3,8,.9))}.stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.025),transparent 27%,transparent 68%,rgba(103,228,207,.025))}#field{display:block;width:100%;height:620px}.field-top{position:absolute;top:18px;right:19px;left:19px;display:flex;justify-content:space-between;gap:15px;pointer-events:none}.field-kicker{font-size:.73rem;letter-spacing:.1em;color:var(--aqua);font-weight:700}.field-state{font-size:.72rem;color:var(--muted);text-align:left}.scene-copy{position:absolute;bottom:18px;right:19px;left:19px;max-width:670px;pointer-events:none}.scene-copy h2{margin:0;font-size:1.3rem;letter-spacing:-.025em}.scene-copy p{margin:7px 0 0;line-height:1.58;color:#c4cddd;font-size:.88rem}.scene-copy .claim{display:inline-block;margin-top:8px;padding:4px 8px;border-radius:7px;background:rgba(255,192,120,.12);color:var(--amber);font-size:.72rem}
+    .learn{padding:15px}.learn .question{margin:0;color:var(--ink);font-size:1rem;line-height:1.55}.learn .answer{margin:8px 0 0;color:var(--muted);font-size:.82rem;line-height:1.6}.nav{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}.nav button,.secondary{border:1px solid var(--line);border-radius:10px;padding:9px;background:var(--surface2);color:var(--ink);font-size:.8rem}.nav .next{background:var(--aqua);border-color:transparent;color:#05231f;font-weight:700}.controls{display:grid;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.controls[hidden]{display:none}.control-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.76rem}.control-label output{color:var(--ink);font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--aqua);margin:7px 0 0}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px}.metric{padding:9px;border-radius:10px;background:rgba(255,255,255,.035)}.metric span{display:block;color:var(--muted);font-size:.65rem}.metric b{display:block;margin-top:4px;font-size:1.06rem;font-weight:600;direction:ltr}.metric small{display:block;margin-top:2px;color:var(--muted);font-size:.63rem}.map-note{margin-top:12px;padding:11px;border-right:2px solid var(--violet);background:var(--soft-violet);color:#cbc5f7;font-size:.76rem;line-height:1.55}.footer{margin:13px 0 0;color:#8591a8;font-size:.74rem;line-height:1.55}
+    @media(max-width:1120px){.workspace{grid-template-columns:220px minmax(0,1fr)}.learn{grid-column:1/-1}.right{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}.right .panel{height:100%}}@media(max-width:790px){.app{padding:14px}.top{display:block}.status{margin-top:10px}.workspace{grid-template-columns:1fr}.steps{order:2}.center{order:1}.right{order:3;grid-template-columns:1fr}.step-list{grid-template-columns:1fr 1fr}.stage,#field{min-height:525px;height:525px}.epistemic{grid-template-columns:1fr}.field-top{display:block}.field-state{margin-top:4px;text-align:right}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:480px){.step-list{grid-template-columns:1fr}.stage,#field{min-height:480px;height:480px}.modebar{align-items:flex-start;flex-direction:column}.metrics{grid-template-columns:1fr 1fr}.field-kicker{font-size:.65rem}.scene-copy h2{font-size:1.1rem}}
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Relational Consciousness Ontology · Visual formalization</p>
-        <h1>Relational State-Space Atlas</h1>
-        <p class="subtitle">A structural simulation of how changing relations can form constraints, persistent nested nodes, and local functional identity.</p>
-      </div>
-      <div class="status"><i></i><span id="stateLabel">Live structural simulation</span></div>
-    </header>
-
-    <section class="shell" aria-label="Interactive relational state-space atlas">
-      <section class="atlas" aria-label="Animated relational field">
-        <canvas id="field" aria-label="Dynamic relational field showing nodes and connections"></canvas>
-        <div class="field-label"><strong>Relational field</strong><span id="fieldCaption">42 changing elements · typed coupling · scale-relative organization</span></div>
-        <div class="phase-banner" aria-live="polite">
-          <h2 id="phaseTitle">1. Difference</h2>
-          <p id="phaseText">Elements become distinguishable. The simulation begins with differences, not with separate substances.</p>
-        </div>
-        <div class="node-tip" id="nodeTip"></div>
+    <header class="top"><div><p class="eyebrow">RCO · تصور بصري تعليمي</p><h1>رحلة الوجود العلائقي</h1><p class="lead">ليست الأشياء هي نقطة البداية هنا؛ بل كيف يمكن للفرق والعلاقة والقيد أن تُنتج بنى مستقرة ومراكز وصول محلية و«أنا هنا الآن».</p></div><div class="status"><i class="pulse"></i><span id="status">رحلة موجهة</span></div></header>
+    <section class="epistemic" aria-label="حدود القراءة"><strong>كيف تقرأ هذا العرض؟</strong><div class="tags"><span class="tag source">مبدأ من النظرية</span><span class="tag visual">صياغة بصرية للمحاكاة</span><span class="tag open">جسر ميتافيزيقي مفتوح</span><span>المحاكي يوضح التنظيم العلائقي؛ لا يقيس الوعي ولا يثبت أنه أساس الكون.</span></div></section>
+    <section class="workspace" aria-label="رحلة تفاعلية في الوجود العلائقي">
+      <aside class="panel steps"><h2>مسار الرحلة</h2><div class="step-list" id="steps"></div></aside>
+      <section class="center"><div class="modebar"><div class="modes" role="tablist" aria-label="طريقة العرض"><button class="mode active" type="button" data-mode="guided" aria-pressed="true">رحلة موجهة</button><button class="mode" type="button" data-mode="lab" aria-pressed="false">مختبر علائقي</button><button class="mode" type="button" data-mode="map" aria-pressed="false">خريطة النظرية</button></div><div class="progress-wrap"><span id="progressText">01 / 09</span><span class="progress"><i id="progressFill"></i></span></div></div>
+        <section class="stage" aria-label="المشهد الوجودي المتغير"><canvas id="field" aria-label="تمثيل بصري متحرك للعلاقات والبنى والمنظورات"></canvas><div class="field-top"><span class="field-kicker" id="fieldKicker">قبل الأشياء</span><span class="field-state" id="fieldState">شرط الظهور ليس جسمًا داخل المشهد</span></div><div class="scene-copy" aria-live="polite"><h2 id="sceneTitle"></h2><p id="sceneText"></p><span class="claim" id="sceneClaim"></span></div></section>
       </section>
-
-      <aside class="sidebar">
-        <section class="card wide">
-          <h2>Existence lens</h2>
-          <div class="phases" id="phases"></div>
-        </section>
-
-        <section class="card">
-          <h2>Field controls</h2>
-          <div class="controls">
-            <label class="control-label">Constraint <output id="constraintValue">62%</output><input id="constraint" type="range" min="0" max="100" value="62"></label>
-            <label class="control-label">Cross-boundary coupling <output id="couplingValue">34%</output><input id="coupling" type="range" min="0" max="100" value="34"></label>
-            <label class="control-label">Retention / memory <output id="memoryValue">71%</output><input id="memory" type="range" min="0" max="100" value="71"></label>
-            <div class="transport"><button class="play" id="play">Pause</button><button id="reset">Reset</button></div>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Selected node · structural indicators</h2>
-          <div class="metric-grid" aria-live="polite">
-            <div class="metric"><span>Boundary</span><b id="metricB">0.31</b><small>relative gradient b</small></div>
-            <div class="metric"><span>Closure</span><b id="metricK">0.72</b><small>coupling ratio κ</small></div>
-            <div class="metric"><span>Persistence</span><b id="metricP">0.68</b><small>macrostate p</small></div>
-            <div class="metric"><span>Access locality</span><b id="metricL">0.66</b><small>functional λ</small></div>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Reading the atlas</h2>
-          <div class="legend">
-            <div><span class="swatch" style="background:var(--violet)"></span><span>Changing elements and relations</span></div>
-            <div><span class="swatch" style="background:var(--aqua)"></span><span>Selected persistent organization</span></div>
-            <div><span class="swatch" style="background:var(--amber)"></span><span>Embodied access / memory trajectory</span></div>
-          </div>
-        </section>
-
-        <section class="card wide notice">
-          <strong>Boundary of the simulation:</strong> it visualizes PRSF-DN structural relations. It does not measure awareness or generate a phenomenal subject. CFI appears only as a metaphysical interpretation.
-        </section>
-      </aside>
+      <aside class="right"><section class="panel learn"><h2>سؤال هذا المشهد</h2><p class="question" id="question"></p><p class="answer" id="answer"></p><div class="nav"><button id="previous" type="button">السابق</button><button class="next" id="next" type="button">التالي</button></div><div class="controls" id="controls"><div><label class="control-label">القيد البنيوي <output id="constraintOut">62%</output></label><input id="constraint" type="range" min="0" max="100" value="62"></div><div><label class="control-label">الترابط عبر الحدود <output id="couplingOut">34%</output></label><input id="coupling" type="range" min="0" max="100" value="34"></div><div><label class="control-label">الاحتفاظ / الذاكرة <output id="memoryOut">71%</output></label><input id="memory" type="range" min="0" max="100" value="71"></div></div><div class="metrics" aria-live="polite"><div class="metric"><span>حدّ علائقي</span><b id="boundary">0.32</b><small>b</small></div><div class="metric"><span>استمرار</span><b id="persistence">0.68</b><small>p</small></div><div class="metric"><span>محلية وصول</span><b id="locality">0.66</b><small>λ</small></div></div><div class="map-note" id="mapNote">ابدأ بالرحلة الموجهة: لا يضع العرض الوعي كعقدة؛ لأنه في النظرية شرطٌ لظهور المشهد، لا جسمٌ فيه.</div></section></aside>
     </section>
-    <p class="footer">Move your pointer through the field to inspect elements. Choose a phase to change the explanatory lens; the same field is read differently as organization becomes more constrained and locally integrated.</p>
+    <p class="footer">هذه أداة لفهم بنية الدعوى النظرية. التماثلات مع الفيزياء أو الحياة ليست برهانًا على أن البنية تولّد خبرة ذاتية، ولا على بقاء الهوية بعد الموت.</p>
   </main>
-
   <script>
-    (() => {
-      const canvas = document.getElementById('field');
-      const ctx = canvas.getContext('2d');
-      const atlas = document.querySelector('.atlas');
-      const phaseHost = document.getElementById('phases');
-      const phaseTitle = document.getElementById('phaseTitle');
-      const phaseText = document.getElementById('phaseText');
-      const fieldCaption = document.getElementById('fieldCaption');
-      const stateLabel = document.getElementById('stateLabel');
-      const tip = document.getElementById('nodeTip');
-      const play = document.getElementById('play');
-      const reset = document.getElementById('reset');
-      const inputs = { constraint: document.getElementById('constraint'), coupling: document.getElementById('coupling'), memory: document.getElementById('memory') };
-      const outputs = { constraint: document.getElementById('constraintValue'), coupling: document.getElementById('couplingValue'), memory: document.getElementById('memoryValue') };
-      const metricEls = { b: document.getElementById('metricB'), k: document.getElementById('metricK'), p: document.getElementById('metricP'), l: document.getElementById('metricL') };
-      const phases = [
-        { name: 'Difference', text: 'Elements become distinguishable. The simulation begins with differences, not with separate substances.', caption: 'Distinguishability · state variation · no node claim yet' },
-        { name: 'Relation', text: 'Differences are linked by changing, typed relations. The visible web is not space itself; it is a model of coupling.', caption: 'Typed coupling · transformation · relational field' },
-        { name: 'Constraint', text: 'Repeated relational influence restricts some transitions. Constraint is modeled as patterned tendency, not as an external command.', caption: 'Recurrent influence · constrained transition space' },
-        { name: 'Structural node', text: 'Where internal coupling, persistence, and robustness become relatively stronger, a scale-relative node can be modeled.', caption: 'Boundary gradient b · closure κ · persistence p' },
-        { name: 'Access localization', text: 'A selected embodied organization preferentially retains and uses information along its own trajectory. This is functional locality, not a consciousness measure.', caption: 'Retention ρ · access locality λ · embodied trajectory' },
-        { name: 'Identity', text: 'Memory, self-related control, and ongoing action make a functional identity. A local subject would require the separate M4 bridge hypothesis.', caption: 'Memory · self-model · functional identity · M4 remains open' },
-        { name: 'Interpretation', text: 'CFI reads the whole field as grounded in awareness. This final lens is metaphysical: the simulation neither proves nor measures it.', caption: 'Consciousness-First Interpretation · metaphysical, non-measured' }
-      ];
-      const palette = { aqua: '#63e8d2', violet: '#9780ff', amber: '#ffbf6d', rose: '#ff7da1', white: '#f6f8ff' };
-      let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2), running = true, phase = 0, time = 0, pointer = null;
-      let nodes = [], trails = [], clusters = [];
-      const count = 42;
-
-      function rnd(seed) { const x = Math.sin(seed * 999.91) * 43758.5453; return x - Math.floor(x); }
-      function makeClusters() {
-        clusters = [
-          { x: W * .34, y: H * .40, r: Math.min(W,H) * .17, label: 'Node A' },
-          { x: W * .67, y: H * .35, r: Math.min(W,H) * .14, label: 'Node B' },
-          { x: W * .61, y: H * .70, r: Math.min(W,H) * .13, label: 'Embodied local node' }
-        ];
-      }
-      function seed() {
-        makeClusters(); nodes = []; trails = [];
-        for (let i = 0; i < count; i++) {
-          const a = rnd(i+2) * Math.PI * 2, r = 55 + rnd(i+5) * Math.min(W,H) * .36;
-          const group = i < 16 ? 0 : i < 29 ? 1 : 2;
-          const c = clusters[group];
-          nodes.push({ i, group, x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r, vx: (rnd(i+8)-.5)*1.4, vy: (rnd(i+11)-.5)*1.4, memory: [], pulse: rnd(i+17) });
-        }
-      }
-      function resize() {
-        const rect = atlas.getBoundingClientRect(); W = rect.width; H = rect.height;
-        canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr); canvas.style.width = W+'px'; canvas.style.height = H+'px';
-        ctx.setTransform(dpr,0,0,dpr,0,0); seed();
-      }
-      function currentParams() { return { constraint: +inputs.constraint.value/100, coupling: +inputs.coupling.value/100, memory: +inputs.memory.value/100 }; }
-      function updateOutputs() { Object.keys(inputs).forEach(k => outputs[k].textContent = inputs[k].value + '%'); }
-      function setPhase(index) {
-        phase = index;
-        [...phaseHost.children].forEach((el,i) => el.classList.toggle('active', i===phase));
-        const p = phases[phase]; phaseTitle.textContent = `${phase+1}. ${p.name}`; phaseText.textContent = p.text; fieldCaption.textContent = p.caption;
-        const presets = [[18,18,12],[30,40,20],[68,35,34],[80,26,55],[72,34,76],[75,26,88],[64,44,72]][phase];
-        ['constraint','coupling','memory'].forEach((k,i)=>inputs[k].value=presets[i]); updateOutputs();
-      }
-      phases.forEach((p,i) => { const b=document.createElement('button'); b.className='phase-button'+(i===0?' active':''); b.type='button'; b.innerHTML=`<span class="phase-number">0${i+1}</span><span class="phase-name">${p.name}</span>`; b.addEventListener('click',()=>setPhase(i)); phaseHost.appendChild(b); });
-      Object.values(inputs).forEach(input=>input.addEventListener('input',updateOutputs));
-      play.addEventListener('click',()=>{ running=!running; play.textContent=running?'Pause':'Play'; stateLabel.textContent=running?'Live structural simulation':'Simulation paused'; });
-      reset.addEventListener('click',()=>{ seed(); time=0; });
-      canvas.addEventListener('pointermove', e=>{ const r=canvas.getBoundingClientRect(); pointer={x:e.clientX-r.left,y:e.clientY-r.top}; });
-      canvas.addEventListener('pointerleave',()=>{ pointer=null; tip.style.display='none'; });
-
-      function metrics(p) {
-        const maturity = phase/6;
-        return { b: Math.min(.92, .08 + p.constraint*.43 + maturity*.25), k: Math.min(.96, .25 + p.constraint*.42 - p.coupling*.13 + maturity*.19), p: Math.min(.96, .08 + p.constraint*.34 + p.memory*.27 + maturity*.21), l: Math.min(.96, .06 + p.memory*.49 + (phase>=4?.2:0) - p.coupling*.08) };
-      }
-      function drawBackground() {
-        const g=ctx.createRadialGradient(W*.5,H*.48,0,W*.5,H*.48,Math.max(W,H)*.67); g.addColorStop(0,'rgba(62,75,145,.17)'); g.addColorStop(.55,'rgba(17,26,53,.09)'); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-        ctx.strokeStyle='rgba(174,193,225,.07)'; ctx.lineWidth=1;
-        for(let x=28;x<W;x+=54){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-        for(let y=30;y<H;y+=54){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-      }
-      function update(p) {
-        const structured = Math.max(0,(phase-1)/5);
-        nodes.forEach((n,idx)=>{
-          const c=clusters[n.group];
-          const dx=c.x-n.x, dy=c.y-n.y;
-          const dist=Math.hypot(dx,dy)+.1;
-          const pull=(.003+structured*.011+p.constraint*.006)*Math.min(dist,240);
-          n.vx += dx/dist*pull; n.vy += dy/dist*pull;
-          n.vx += Math.sin(time*.012+n.i*1.7)*.011; n.vy += Math.cos(time*.014+n.i*1.2)*.011;
-          if(phase<2){ n.vx += (n.x-W*.5)*.00055; n.vy += (n.y-H*.5)*.00055; }
-          n.vx*=.94; n.vy*=.94; n.x+=n.vx; n.y+=n.vy;
-          if(n.x<14||n.x>W-14)n.vx*=-1; if(n.y<14||n.y>H-14)n.vy*=-1;
-          n.x=Math.max(14,Math.min(W-14,n.x)); n.y=Math.max(14,Math.min(H-14,n.y));
-          if(n.group===2 && phase>=4){ n.memory.push({x:n.x,y:n.y,a:1}); if(n.memory.length>Math.floor(5+p.memory*25))n.memory.shift(); }
-        });
-      }
-      function drawRelations(p) {
-        const reach = 110 + p.coupling*100 + phase*6;
-        for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
-          const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y); if(d>reach) continue;
-          const same=a.group===b.group; const activity=(1-d/reach)*(same?.86:(.25+p.coupling*.4));
-          if(activity<.08)continue;
-          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineWidth=same?1.05:.65;
-          ctx.strokeStyle=same?`rgba(151,128,255,${activity*.46})`:`rgba(130,164,225,${activity*.24})`;ctx.stroke();
-        }
-      }
-      function drawClusters(p) {
-        if(phase<3) return;
-        clusters.forEach((c,idx)=>{
-          const active=idx===2&&phase>=4; const scale=.72+p.constraint*.32+(idx===2?p.memory*.12:0);
-          ctx.beginPath();ctx.ellipse(c.x,c.y,c.r*scale,c.r*scale*.74,idx*.38,0,Math.PI*2);
-          ctx.fillStyle=active?'rgba(255,191,109,.055)':'rgba(99,232,210,.035)';ctx.fill();
-          ctx.lineWidth=active?1.8:1;ctx.setLineDash(active?[5,7]:[3,8]);ctx.strokeStyle=active?'rgba(255,191,109,.72)':'rgba(99,232,210,.38)';ctx.stroke();ctx.setLineDash([]);
-          if(phase>=4||idx!==2){ctx.fillStyle=active?palette.amber:palette.aqua;ctx.font='12px Inter, system-ui';ctx.fillText(c.label,c.x-c.r*.46,c.y-c.r*scale*.78-8);}
-        });
-      }
-      function drawMemory(p) {
-        if(phase<4)return;
-        nodes.filter(n=>n.group===2).forEach(n=>{
-          n.memory.forEach((m,i)=>{const a=(i+1)/n.memory.length*.24*p.memory;ctx.beginPath();ctx.arc(m.x,m.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,191,109,${a})`;ctx.fill();});
-        });
-      }
-      function drawNodes(p) {
-        const selectedGroup=phase>=4?2:-1;
-        nodes.forEach(n=>{
-          const selected=n.group===selectedGroup; const size=selected?4.6:3.3;
-          const halo=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,size*4); halo.addColorStop(0,selected?'rgba(255,191,109,.52)':'rgba(151,128,255,.42)');halo.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=halo;ctx.fillRect(n.x-size*4,n.y-size*4,size*8,size*8);
-          ctx.beginPath();ctx.arc(n.x,n.y,size,0,Math.PI*2);ctx.fillStyle=selected?palette.amber:phase>=3?palette.aqua:palette.violet;ctx.fill();
-        });
-      }
-      function inspect(p) {
-        if(!pointer)return; let closest=null,best=16;
-        nodes.forEach(n=>{const d=Math.hypot(n.x-pointer.x,n.y-pointer.y);if(d<best){best=d;closest=n;}});
-        if(!closest){tip.style.display='none';return;}
-        const nodeName=closest.group===2?'Embodied local node':`Structural node ${closest.group===0?'A':'B'}`;
-        tip.style.display='block';tip.style.left=Math.min(pointer.x+14,W-195)+'px';tip.style.top=Math.min(pointer.y+14,H-105)+'px';
-        tip.innerHTML=`<b>${nodeName}</b><br>element ${String(closest.i+1).padStart(2,'0')} · relation state ${closest.group===2?'locally retained':'dynamically coupled'}<br><span style="color:#9ba8bb">This is a modeled element, not a conscious unit.</span>`;
-      }
-      function loop() {
-        if(running){time++; const p=currentParams(); update(p);}
-        const p=currentParams(), m=metrics(p); ctx.clearRect(0,0,W,H); drawBackground(); drawRelations(p); drawClusters(p); drawMemory(p); drawNodes(p); inspect(p);
-        metricEls.b.textContent=m.b.toFixed(2);metricEls.k.textContent=m.k.toFixed(2);metricEls.p.textContent=m.p.toFixed(2);metricEls.l.textContent=m.l.toFixed(2);
-        requestAnimationFrame(loop);
-      }
-      window.addEventListener('resize',resize); resize(); updateOutputs(); loop();
-    })();
+  (()=>{const canvas=document.getElementById('field'),ctx=canvas.getContext('2d'),stage=document.querySelector('.stage');
+    const steps=[
+      ['قبل الأشياء','شرط الظهور','قبل الأشياء','شرط الظهور ليس جسمًا داخل المشهد','ليس الوعي نقطة مضيئة في الكون','تبدأ النظرية من شرط يجعل الظهور ممكنًا، لا من شيء منفصل داخل الفضاء. لهذا لا يرسم هذا المشهد «وعيًا» ككرة أو كائن.','مبدأ من النظرية · الوعي ليس عقدة مرئية','إذا كان كل شيء يظهر، فما الذي يجعل الظهور ممكنًا أصلًا؟','هذا سؤال أنطولوجي. المحاكي لا يجيب عنه بقياس؛ بل يمنع خطأً بصريًا شائعًا: تحويل الشرط إلى شيء داخل ما يشرطه.'],
+      ['الفرق','قابلية التميّز','الفرق','عناصر قابلة للتميّز من دون افتراض جوهر مستقل','لا يظهر العالم كأشياء مكتملة','تظهر فروق في الحالة والموقع. لا تعني النقاط «جواهر منفصلة»؛ إنها عناصر نموذجية يمكن تمييزها والتعامل معها علائقيًا.','مبدأ من النظرية · الفرق يسبق الشيء','ما الذي يجعل عنصرًا مختلفًا عن آخر؟','في هذا النموذج، الاختلاف في الحالة والعلاقة يكفي للبدء؛ لا نحتاج افتراض مادة مستقلة مكتملة قبل العلاقة.'],
+      ['العلاقة','تأثير متبادل','العلاقة','العالم المرئي شبكة اقتران، لا خريطة فضاء حرفية','العلاقة تنظّم الفرق','حين تتغير العناصر معًا تظهر علاقات. الخطوط لا تمثل الفضاء نفسه؛ بل تمثل اقترانًا وتأثيرًا متبادلًا بين حالات.','مبدأ من النظرية · العلاقة قبل الكيان المنعزل','هل العلاقة إضافة بين أشياء جاهزة؟','وفق هذا التصور، ليست العلاقة مجرد رابط لاحق؛ بل جزء مما يجعل العناصر قابلة للتحدد والاستمرار.'],
+      ['القيد','تكرار وانتظام','القيد','مسارات التحول لا تبقى متساوية الاحتمال','التكرار يقيّد ما يمكن أن يحدث','بعض التأثيرات تتكرر فتجعل انتقالات معينة أرجح من غيرها. هذا هو القيد البنيوي: ميل منظم داخل الحقل، لا أمر خارجي.','صياغة بصرية · القيد يغيّر شكل الحركة','كيف تنتقل العلاقات المتغيرة إلى نظام؟','عندما يعاد إنتاج نمط تأثير، يصبح الحقل أقل سيولة. القيد هنا يسمح بظهور استقرار نسبي من دون افتراض حدود مطلقة.'],
+      ['عقد متداخلة','استقرار على مقاييس','العقد المتداخلة','حدود نسبية داخل تنظيم أكبر','العقدة نمط مستقر داخل علاقات','حيث تقوى الروابط الداخلية ويصمد النمط أمام الاضطراب، يمكن نمذجة عقدة نسبية. كل عقدة تقع داخل علاقات أوسع منها.','طبقة PRSF-DN · حدّ، ثبات، متانة','هل الحد جدار صلب يفصل الداخل عن الخارج؟','لا. الحد تدرج في قوة الترابط. لهذا يمكن لنظام أو كائن أو بيئة أن يكون عقدة دون أن يكون معزولًا تمامًا.'],
+      ['التموضع','هنا / الآن','التموضع المحلي','نافذة وصول جزئية داخل حقل مشترك','«هنا» مركز وصول، لا مركز للكون','تظهر نافذة محلية داخل الخريطة الكلية. تتلقى هذه البنية بعض الإشارات وتحجب أخرى؛ فتتشكل محلية وظيفية، لا انفصال مطلق.','طبقة PRSF-DN · محلية الوصول ليست قياسًا للوعي','لماذا يظهر العالم من مكان محدد؟','لأن أي تنظيم يعمل من مسار وصول محدد. «هنا» اسم للمركز المرجعي الذي تتجمع حوله معلومات وفعل محدودان.'],
+      ['الذاكرة والهوية','استمرار النمط','الذاكرة والهوية','أثر الحالات السابقة يغير الحالة التالية','«أنا» استمرار منظم لا نقطة ثابتة','ترسم الآثار الزمنية كيف يحتفظ التنظيم بجزء من تاريخه. الذاكرة والضبط الذاتي والسرد تجعل الهوية وظيفية ومتغيرة.','جسر موضوعي مفتوح · الذات الظاهرية غير مشتقة','كيف يبقى «أنا» رغم تغير الحالات؟','هنا نمذجة لاستمرارية نمط ومسار معلومات. أما الانتقال من ذلك إلى خبرة ذاتية فعلية فهو فرضية إضافية غير محسومة.'],
+      ['الآخرون','مناظير متعددة','تعدد المناظير','مراكز وصول متعددة لعالم علائقي مشترك','الآخر ليس نسخة من منظوري','تظهر عدة مراكز وصول محدودة ومتصلة. لكل منها تاريخ ومسار محلي، لكنها تشترك في حقل علائقي ولا تختزل بعضها بعضًا.','نتيجة عرضية أخلاقية · لا مركز مطلق','هل اتساع الهوية يلغي اختلاف الآخرين؟','لا. توسيع مرجع الهوية، إن قبل كقراءة فلسفية، لا يبرر إلغاء الحدود أو إنكار استقلال المنظورات الأخرى.'],
+      ['التأويل','قراءة ميتافيزيقية','التأويل','البنية المرئية لا تثبت أساسها الأنطولوجي','الوعي-أولًا قراءة، لا نتيجة المحاكي','يمكن لقراءة CFI أن ترى الحقل العلائقي كله متجذرًا في الوعي. لكن هذا عرض ميتافيزيقي: لا تقيسه هذه الرسوم ولا تستنتجه من الفيزياء.','تأويل ميتافيزيقي · ليس إثباتًا علميًا','ماذا يثبت هذا المشهد؟','يثبت فقط أن النموذج البصري متسق مع بنية علائقية مقترحة. لا يثبت أن الوعي أساس الواقع، ولا بقاء الهوية، ولا خبرة أي نظام.']
+    ];
+    const el={steps:document.getElementById('steps'),title:document.getElementById('sceneTitle'),text:document.getElementById('sceneText'),claim:document.getElementById('sceneClaim'),kicker:document.getElementById('fieldKicker'),state:document.getElementById('fieldState'),question:document.getElementById('question'),answer:document.getElementById('answer'),prev:document.getElementById('previous'),next:document.getElementById('next'),status:document.getElementById('status'),progress:document.getElementById('progressText'),fill:document.getElementById('progressFill'),controls:document.getElementById('controls'),note:document.getElementById('mapNote'),boundary:document.getElementById('boundary'),persistence:document.getElementById('persistence'),locality:document.getElementById('locality')};
+    const inputs={constraint:document.getElementById('constraint'),coupling:document.getElementById('coupling'),memory:document.getElementById('memory')},outputs={constraint:document.getElementById('constraintOut'),coupling:document.getElementById('couplingOut'),memory:document.getElementById('memoryOut')};
+    let W=0,H=0,dpr=1,t=0,scene=0,mode='guided',particles=[];const color={aqua:'#67e4cf',violet:'#9e8bff',amber:'#ffc078',rose:'#ff8bab',ink:'#eef2fb',muted:'#a6b0c4'};
+    const rnd=n=>{const x=Math.sin(n*12.9898)*43758.5453;return x-Math.floor(x)},rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')'};
+    function resize(){const r=stage.getBoundingClientRect();W=r.width;H=r.height;dpr=Math.min(devicePixelRatio||1,2);canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);seed()}
+    function seed(){particles=[];for(let i=0;i<48;i++){const a=rnd(i+1)*Math.PI*2,r=Math.min(W,H)*(.08+rnd(i+11)*.38);particles.push({i,x:W*.5+Math.cos(a)*r,y:H*.48+Math.sin(a)*r,vx:(rnd(i+29)-.5)*1.2,vy:(rnd(i+53)-.5)*1.2,group:i%3,trail:[]})}}
+    const params=()=>({c:+inputs.constraint.value/100,k:+inputs.coupling.value/100,m:+inputs.memory.value/100});
+    function outputsUpdate(){Object.keys(inputs).forEach(k=>outputs[k].textContent=inputs[k].value+'%');const p=params(),m=scene/8;el.boundary.textContent=Math.min(.95,.08+p.c*.5+m*.17).toFixed(2);el.persistence.textContent=Math.min(.96,.1+p.c*.29+p.m*.28+m*.25).toFixed(2);el.locality.textContent=Math.min(.96,.05+p.m*.48+(scene>=5?.24:0)-p.k*.08).toFixed(2)}
+    function updateCopy(){const s=steps[scene];el.title.textContent=s[4];el.text.textContent=s[5];el.claim.textContent=s[6];el.kicker.textContent=s[2];el.state.textContent=s[3];el.question.textContent=s[7];el.answer.textContent=s[8];el.progress.textContent=String(scene+1).padStart(2,'0')+' / 09';el.fill.style.width=((scene+1)/steps.length*100)+'%';el.prev.disabled=scene===0;el.next.textContent=scene===steps.length-1?'إعادة الرحلة':'التالي';[...el.steps.children].forEach((b,i)=>b.classList.toggle('active',i===scene));const presets=[[25,38,10],[22,44,15],[38,66,24],[76,35,44],[82,30,62],[73,28,74],[77,24,91],[67,48,77],[61,52,71]][scene];if(mode==='guided')Object.keys(inputs).forEach((k,i)=>inputs[k].value=presets[i]);outputsUpdate();el.note.textContent=mode==='map'?'الخريطة تجمع المراحل في بنية واحدة. لا تقرأ السهم كسبب فيزيائي مثبت؛ إنه تسلسل تفسيري داخل النظرية.':mode==='lab'?'حرّك المعاملات ثم لاحظ: هذه معاملات للعرض البصري، وليست قياسات تجريبية للكون أو للوعي.':scene===8?'القراءة الوعي-أولًا تبقى مستقلة عن المحاكاة البنيوية.':'تقدّم ببطء: كل مشهد يضيف طبقة تفسيرية، ولا يلغي ما قبله.'}
+    const setScene=i=>{scene=(i+steps.length)%steps.length;updateCopy();seed()};
+    steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='step'+(i===0?' active':'');b.innerHTML='<span class="step-no">'+String(i+1).padStart(2,'0')+'</span><span><b>'+s[0]+'</b><small>'+s[1]+'</small></span>';b.addEventListener('click',()=>setScene(i));el.steps.appendChild(b)});
+    document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',x===b)});el.controls.hidden=mode!=='lab';el.status.textContent=mode==='guided'?'رحلة موجهة':mode==='lab'?'مختبر علائقي':'خريطة النظرية';updateCopy()}));
+    el.prev.addEventListener('click',()=>setScene(scene-1));el.next.addEventListener('click',()=>scene===steps.length-1?setScene(0):setScene(scene+1));Object.values(inputs).forEach(x=>x.addEventListener('input',outputsUpdate));
+    function backdrop(){const g=ctx.createRadialGradient(W*.5,H*.45,0,W*.5,H*.45,Math.max(W,H)*.72);g.addColorStop(0,'rgba(61,75,154,.2)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(181,198,233,.045)';ctx.lineWidth=1;for(let x=30;x<W;x+=55){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=30;y<H;y+=55){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}}
+    function move(p){particles.forEach(n=>{let tx=W*.5,ty=H*.47;if(scene>=3){const groups=[[.31,.37],[.68,.35],[.58,.69]];tx=W*groups[n.group][0];ty=H*groups[n.group][1]}const dx=tx-n.x,dy=ty-n.y,d=Math.hypot(dx,dy)+1,pull=(scene<2?.0015:.004+p.c*.01)*Math.min(d,220);n.vx+=dx/d*pull;n.vy+=dy/d*pull;n.vx+=Math.sin(t*.012+n.i)*.025;n.vy+=Math.cos(t*.014+n.i*1.7)*.025;n.vx*=.94;n.vy*=.94;n.x+=n.vx;n.y+=n.vy;if(scene>=6&&n.group===2){n.trail.push({x:n.x,y:n.y});if(n.trail.length>Math.floor(8+p.m*26))n.trail.shift()}})}
+    function drawParticles(p){const reach=85+p.k*115+(scene>=2?24:0);if(scene>=2)for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){const a=particles[i],b=particles[j],d=Math.hypot(a.x-b.x,a.y-b.y),same=a.group===b.group;if(d<reach&&(same||p.k>.38)){const alpha=(1-d/reach)*(same?.38:.14+p.k*.16);ctx.strokeStyle=rgba(same?color.violet:'#7fa9ed',alpha);ctx.lineWidth=same?1:.7;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}}
+      if(scene>=4){const groups=[[.31,.37,.16],[.68,.35,.14],[.58,.69,.14]];groups.forEach((g,i)=>{const x=W*g[0],y=H*g[1],r=Math.min(W,H)*g[2]*(.7+p.c*.35);ctx.setLineDash(i===2?[6,7]:[3,8]);ctx.strokeStyle=rgba(i===2?color.amber:color.aqua,i===2?.67:.34);ctx.lineWidth=i===2?1.8:1;ctx.beginPath();ctx.ellipse(x,y,r,r*.75,i*.35,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=i===2?color.amber:color.aqua;ctx.font='12px Tahoma';ctx.fillText(i===2?'تنظيم محلي':i===0?'عقدة بنيوية':'عقدة بنيوية',x-r*.5,y-r*.8-7)})}
+      particles.forEach(n=>{if(scene>=6&&n.group===2)n.trail.forEach((z,i)=>{ctx.fillStyle=rgba(color.amber,(i+1)/Math.max(1,n.trail.length)*.22*p.m);ctx.beginPath();ctx.arc(z.x,z.y,1.4,0,Math.PI*2);ctx.fill()});const r=n.group===2&&scene>=5?4.5:3.1,halo=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*4);halo.addColorStop(0,rgba(n.group===2&&scene>=5?color.amber:scene>=3?color.aqua:color.violet,.42));halo.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=halo;ctx.fillRect(n.x-r*4,n.y-r*4,r*8,r*8);ctx.fillStyle=n.group===2&&scene>=5?color.amber:scene>=3?color.aqua:color.violet;ctx.beginPath();ctx.arc(n.x,n.y,r,0,Math.PI*2);ctx.fill()})}
+    function drawPre(){ctx.fillStyle=rgba(color.aqua,.16+.06*Math.sin(t*.017));ctx.beginPath();ctx.arc(W*.5,H*.46,Math.min(W,H)*.08,0,Math.PI*2);ctx.fill();ctx.strokeStyle=rgba(color.aqua,.28);ctx.setLineDash([3,10]);ctx.beginPath();ctx.arc(W*.5,H*.46,Math.min(W,H)*.17,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=rgba(color.ink,.8);ctx.font='16px Tahoma';ctx.textAlign='center';ctx.fillText('ليس شيئًا داخل العالم',W*.5,H*.46+6);ctx.textAlign='right'}
+    function drawLocalization(){const cx=W*.58,cy=H*.69,r=Math.min(W,H)*.14;ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();ctx.fillStyle='rgba(255,192,120,.08)';ctx.fillRect(cx-r,cy-r,r*2,r*2);ctx.strokeStyle=rgba(color.amber,.85);ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,r*.92,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.fillStyle=color.amber;ctx.font='13px Tahoma';ctx.fillText('نافذة الوصول: هنا',cx-r*.62,cy+r+23);ctx.strokeStyle=rgba(color.amber,.4);ctx.setLineDash([4,6]);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(W*.85,H*.27);ctx.stroke();ctx.setLineDash([])}
+    function drawPlural(){const ps=[[.25,.34,'منظور أ'],[.72,.30,'منظور ب'],[.56,.74,'منظور ج']];ps.forEach((v,i)=>{const x=W*v[0],y=H*v[1],r=Math.min(W,H)*.105;ctx.fillStyle=rgba([color.aqua,color.violet,color.rose][i],.08);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.strokeStyle=rgba([color.aqua,color.violet,color.rose][i],.7);ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();ctx.fillStyle=[color.aqua,color.violet,color.rose][i];ctx.font='13px Tahoma';ctx.fillText(v[2],x-r*.35,y+4)});ctx.strokeStyle=rgba(color.ink,.22);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(W*.25,H*.34);ctx.lineTo(W*.72,H*.3);ctx.lineTo(W*.56,H*.74);ctx.closePath();ctx.stroke()}
+    function drawMap(){const y0=H*.18,dy=Math.min(49,(H*.66)/8);ctx.strokeStyle=rgba(color.aqua,.35);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(W*.5,y0);ctx.lineTo(W*.5,y0+dy*8);ctx.stroke();steps.forEach((s,i)=>{const y=y0+i*dy,active=i===scene;ctx.fillStyle=active?rgba(color.aqua,.18):rgba(color.violet,.09);ctx.strokeStyle=active?color.aqua:rgba(color.violet,.48);ctx.lineWidth=active?2:1;ctx.beginPath();ctx.roundRect(W*.5-125,y-14,250,28,9);ctx.fill();ctx.stroke();ctx.fillStyle=active?color.ink:color.muted;ctx.font='13px Tahoma';ctx.textAlign='center';ctx.fillText((i+1)+'. '+s[0],W*.5,y+5);ctx.textAlign='right'});ctx.fillStyle=rgba(color.muted,.8);ctx.font='12px Tahoma';ctx.textAlign='center';ctx.fillText('تسلسل تفسيري — لا قانون فيزيائي مثبت',W*.5,H*.91);ctx.textAlign='right'}
+    function drawInterpretation(){const g=ctx.createRadialGradient(W*.5,H*.45,0,W*.5,H*.45,Math.min(W,H)*.42);g.addColorStop(0,rgba(color.aqua,.15));g.addColorStop(.55,rgba(color.violet,.09));g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle=rgba(color.amber,.9);ctx.font='14px Tahoma';ctx.textAlign='center';ctx.fillText('تأويل الوعي-أولًا: قراءة للكل، لا نتيجة للمشهد',W*.5,H*.2);ctx.textAlign='right'}
+    function loop(){t++;const p=params();ctx.clearRect(0,0,W,H);backdrop();if(mode==='map')drawMap();else if(scene===0)drawPre();else{move(p);drawParticles(p);if(scene===5)drawLocalization();if(scene===7)drawPlural();if(scene===8)drawInterpretation()}requestAnimationFrame(loop)}
+    window.addEventListener('resize',resize);resize();outputsUpdate();updateCopy();loop();
+  })();
   </script>
 </body>
 </html>
