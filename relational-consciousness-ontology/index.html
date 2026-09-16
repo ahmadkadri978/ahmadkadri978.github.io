@@ -1,22 +1,295 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Relational Consciousness Ontology V3 — State-Space Atlas v1.0 Final</title>
-<style>
-:root{--bg:#0d1117;--panel:#151b23;--card:#10161e;--text:#edf2f7;--muted:#97a3b3;--border:#2b3440;--accent:#76a7ff;--blue:#6f91c7;--teal:#60b3aa;--amber:#c9955d;--violet:#aa8dce;--rose:#d27c98}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1500px;margin:auto;padding:18px}.head{margin-bottom:14px}.head h1{font-size:22px;margin:0 0 4px}.head p{margin:0;color:var(--muted);font-size:13px}.notice{display:flex;gap:9px;padding:10px 12px;border:1px solid var(--border);border-radius:11px;background:var(--panel);margin-bottom:12px}.dot{width:9px;height:9px;background:var(--teal);border-radius:50%;margin-top:5px;flex:none}.modes,.controls{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;align-items:center}button,select,input{font:inherit}button{min-height:39px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);cursor:pointer}button.active{border-color:var(--accent);background:#1b2943}.ctrl{display:flex;align-items:center;gap:7px;min-height:39px;padding:5px 8px;border:1px solid var(--border);border-radius:9px;background:var(--card)}.ctrl label{font-size:11px;color:var(--muted);white-space:nowrap}input[type=range]{width:118px}select{border:0;background:var(--card);color:var(--text);min-width:160px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}.stage,.panel{border:1px solid var(--border);border-radius:12px;background:var(--panel)}.stage{padding:8px}.panel{padding:11px}.panel h3{font-size:13px;margin:0 0 8px}#main{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:9px;background:var(--card)}.side{display:grid;gap:10px}.small{font-size:11px;line-height:1.48;color:var(--muted)}.mono{font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);white-space:pre-wrap}.metric{display:grid;grid-template-columns:92px 1fr 36px;gap:6px;align-items:center;margin:6px 0}.bar{height:7px;border:1px solid var(--border);border-radius:99px;background:#0f141a;overflow:hidden}.bar span{display:block;height:100%;background:var(--teal);width:0}.metric b{font-size:10px;text-align:right}.crumbs{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.crumb{padding:3px 6px;border:1px solid var(--border);border-radius:7px;background:var(--card);font-size:10px}.timeline{display:grid;grid-template-columns:repeat(51,1fr);gap:1px;margin-top:7px}.timeline span{height:6px;border-radius:2px;background:var(--border)}.timeline span.on{background:var(--teal)}.chain{display:grid;gap:5px}.chain div{padding:5px 7px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:10px;color:var(--muted)}.chain div.on{border-color:var(--rose);color:var(--text)}.legend{font-size:10px;color:var(--muted);display:grid;gap:4px}.badge{display:inline-block;padding:2px 6px;border:1px solid var(--border);border-radius:999px;font-size:9px;margin-right:5px}.node{cursor:pointer}.sel{fill:none;stroke:var(--accent);stroke-width:2;opacity:0}.node.selected .sel{opacity:1}@media(max-width:760px){.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}}@media(max-width:520px){.side{grid-template-columns:1fr}.ctrl{flex:1 1 100%}input[type=range]{width:100%}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive structural visualization of Relational Consciousness Ontology">
+  <title>RCO — Relational State-Space Atlas</title>
+  <style>
+    :root {
+      --ink: #e9edf5;
+      --muted: #9ba8bb;
+      --deep: #080b14;
+      --panel: rgba(15, 21, 36, .86);
+      --panel2: rgba(23, 31, 52, .82);
+      --line: rgba(174, 193, 225, .14);
+      --aqua: #63e8d2;
+      --violet: #9780ff;
+      --amber: #ffbf6d;
+      --rose: #ff7da1;
+      --white: #f6f8ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 16% -8%, rgba(89, 103, 214, .28), transparent 34rem),
+        radial-gradient(circle at 88% 5%, rgba(28, 182, 164, .16), transparent 30rem),
+        var(--deep);
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { max-width: 1480px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 20px; }
+    .eyebrow { margin: 0 0 7px; color: var(--aqua); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { font-size: clamp(1.45rem, 3vw, 2.25rem); line-height: 1.06; margin: 0; letter-spacing: -.04em; font-weight: 650; }
+    .subtitle { max-width: 760px; margin: 9px 0 0; color: var(--muted); line-height: 1.55; font-size: .95rem; }
+    .status { display: flex; align-items: center; gap: 9px; color: var(--muted); white-space: nowrap; font-size: .82rem; padding-top: 5px; }
+    .status i { width: 9px; height: 9px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 14px var(--aqua); }
+    .shell { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; }
+    .atlas { min-height: 650px; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(circle at 50% 47%, rgba(47, 63, 118, .24), rgba(8, 11, 20, .34) 54%, rgba(2, 4, 9, .88)); }
+    #field { width: 100%; height: 100%; min-height: 650px; display: block; }
+    .field-label { position: absolute; left: 22px; top: 20px; pointer-events: none; }
+    .field-label strong { display: block; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; }
+    .field-label span { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; }
+    .phase-banner { position: absolute; left: 22px; bottom: 19px; max-width: min(550px, calc(100% - 44px)); pointer-events: none; }
+    .phase-banner h2 { margin: 0; font-size: 1.18rem; letter-spacing: -.025em; }
+    .phase-banner p { margin: 6px 0 0; color: #b8c4d8; line-height: 1.43; font-size: .86rem; }
+    .phase-banner em { color: var(--amber); font-style: normal; }
+    .node-tip { position: absolute; display: none; pointer-events: none; min-width: 172px; padding: 11px 12px; border: 1px solid rgba(99, 232, 210, .32); border-radius: 10px; background: rgba(4, 8, 17, .9); box-shadow: 0 14px 30px rgba(0,0,0,.28); font-size: .76rem; line-height: 1.45; }
+    .node-tip b { color: var(--aqua); }
+    .sidebar { display: grid; align-content: start; gap: 13px; }
+    .card { padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--panel); box-shadow: 0 14px 45px rgba(0,0,0,.15); }
+    .card h2 { margin: 0 0 12px; font-size: .78rem; letter-spacing: .11em; text-transform: uppercase; color: #c7d2e5; }
+    .phases { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .phase-button { display: grid; grid-template-columns: 28px 1fr; align-items: center; text-align: left; padding: 9px 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--muted); transition: .18s ease; }
+    .phase-button:hover { color: var(--ink); background: rgba(151,128,255,.09); }
+    .phase-button.active { color: var(--white); background: rgba(99,232,210,.11); border-color: rgba(99,232,210,.24); }
+    .phase-number { color: var(--aqua); font-variant-numeric: tabular-nums; font-size: .75rem; }
+    .phase-name { font-size: .86rem; font-weight: 590; }
+    .controls { display: grid; gap: 12px; }
+    .control-label { display: flex; justify-content: space-between; gap: 12px; font-size: .78rem; color: var(--muted); }
+    .control-label output { color: var(--ink); font-variant-numeric: tabular-nums; }
+    input[type="range"] { width: 100%; accent-color: var(--aqua); margin: 8px 0 0; }
+    .transport { display: flex; gap: 8px; }
+    .transport button { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 9px; color: var(--ink); background: var(--panel2); font-size: .81rem; }
+    .transport button:hover { border-color: rgba(99,232,210,.4); }
+    .transport .play { background: var(--aqua); color: #06221f; border-color: transparent; font-weight: 700; }
+    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .metric { padding: 10px; border-radius: 10px; background: rgba(255,255,255,.035); }
+    .metric span { display: block; color: var(--muted); font-size: .68rem; letter-spacing: .07em; text-transform: uppercase; }
+    .metric b { display: block; margin-top: 4px; font-size: 1.15rem; font-weight: 620; font-variant-numeric: tabular-nums; }
+    .metric small { display: block; color: var(--muted); font-size: .68rem; margin-top: 2px; }
+    .legend { display: grid; gap: 8px; color: var(--muted); font-size: .76rem; line-height: 1.35; }
+    .legend div { display: grid; grid-template-columns: 13px 1fr; gap: 8px; align-items: start; }
+    .swatch { width: 9px; height: 9px; margin-top: 3px; border-radius: 50%; }
+    .notice { color: #bfcae0; font-size: .75rem; line-height: 1.45; }
+    .notice strong { color: var(--amber); }
+    .footer { margin-top: 12px; color: #7f8ca3; font-size: .74rem; line-height: 1.45; }
+    @media (max-width: 980px) { .shell { grid-template-columns: 1fr; } .sidebar { grid-template-columns: repeat(2, minmax(0,1fr)); } .sidebar .wide { grid-column: 1 / -1; } }
+    @media (max-width: 640px) { .app { padding: 14px; } .topbar { display: block; } .status { margin-top: 12px; } .atlas, #field { min-height: 510px; } .sidebar { grid-template-columns: 1fr; } .sidebar .wide { grid-column: auto; } .phase-banner p { font-size: .8rem; } }
+  </style>
 </head>
-<body><div class="wrap">
-<div class="head"><h1>Relational Consciousness Ontology V3 — State-Space Atlas v1.0 Final</h1><p>Standalone interactive visualization. No server, API, or internet connection required.</p></div>
-<div class="notice"><span class="dot"></span><div><strong>Modeling rule:</strong> Awareness is not rendered as a node. The graph begins at manifested distinction. Space, time, matter-like persistence, boundaries, perspective, and identity are treated as derived regimes. <span class="small">Numerical metrics are visualization formalizations, not empirical physics.</span></div></div>
-<div class="modes" id="modes"></div>
-<div class="controls"><button id="play">Play</button><button id="step">+1</button><div class="ctrl"><label>Transformation τ</label><input id="tau" type="range" min="0" max="100" value="0"><output id="tauOut">0</output></div><div class="ctrl"><label>Semantic scale</label><select id="scale"></select></div><div class="ctrl"><label>Identity breadth</label><input id="breadth" type="range" min="1" max="6" value="1"><output id="breadthOut">1</output></div><button id="here" class="active">HERE</button><button id="now" class="active">NOW</button><button id="iBtn" class="active">I</button><button id="reset">Reset</button></div>
-<div class="layout"><div class="stage"><svg id="main" viewBox="0 0 940 530"><defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L0 6 L6 3 Z" fill="currentColor"/></marker><radialGradient id="gradP"><stop offset="0%" stop-color="#d27c98" stop-opacity=".13"/><stop offset="100%" stop-color="#d27c98" stop-opacity="0"/></radialGradient><radialGradient id="gradF"><stop offset="0%" stop-color="#60b3aa" stop-opacity=".10"/><stop offset="100%" stop-color="#60b3aa" stop-opacity="0"/></radialGradient></defs><g id="bg"></g><g id="ghost"></g><g id="edges"></g><g id="overlay"></g><g id="nodes"></g><g id="labels"></g></svg><div class="timeline" id="timeline"></div></div>
-<div class="side"><section class="panel"><h3 id="modeTitle"></h3><div id="modeDesc" class="small"></div><div id="crumbs" class="crumbs"></div></section><section class="panel"><h3>Derived structural metrics</h3><div id="metrics"></div></section><section class="panel"><h3>Identity formation</h3><div class="chain" id="chain"></div></section><section class="panel"><h3>Constraint state-space</h3><svg id="phase" viewBox="0 0 260 185" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px"><line x1="34" y1="150" x2="238" y2="150" stroke="#2b3440"/><line x1="34" y1="150" x2="34" y2="18" stroke="#2b3440"/><text x="136" y="176" fill="#97a3b3" font-size="9" text-anchor="middle">Transformation constraint →</text><text x="12" y="88" fill="#97a3b3" font-size="9" text-anchor="middle" transform="rotate(-90 12 88)">Perspective isolation →</text><text x="40" y="140" fill="#97a3b3" font-size="8">fluid</text><text x="184" y="140" fill="#97a3b3" font-size="8">matter-like</text><text x="176" y="34" fill="#97a3b3" font-size="8">embodied local</text><circle id="phasePoint" cx="52" cy="137" r="6" fill="#60b3aa"/></svg></section><section class="panel"><h3>Selected structure</h3><div id="info" class="mono">Tap a visible node to inspect its role.</div></section><section class="panel"><h3>Epistemic status</h3><div class="legend"><div><span class="badge">SOURCE CLAIM</span>Explicitly asserted by the ontology.</div><div><span class="badge">VISUAL FORMALIZATION</span>Added to make the ontology simulatable.</div><div><span class="badge">HYPOTHESIS</span>Permitted possibility, not asserted fact.</div></div></section><section class="panel"><h3>Current formalization</h3><div id="formula" class="mono"></div></section></div></div>
-</div>
-<script>
-(()=>{const S={mode:'manifestation',tau:0,scale:0,breadth:1,playing:false,timer:null,here:true,now:true,I:true,selected:null};const modes=['manifestation','nested','perspective','identity','constraint','recognition','hypothesis','comparison'];const modeLabels={manifestation:'Manifestation',nested:'Nested reality',perspective:'Perspectives',identity:'HERE / NOW / I',constraint:'Constraint space',recognition:'Recognition',hypothesis:'Hypothesis',comparison:'Physics parallels'};const scales=['Cosmic structure','Galaxy','Stellar system','Planetary system','Planetary environment','Biosphere','Organism','Nervous system','Perspective'];const ids=['Body-self','Pattern-self','Center-in-network','Network-self','Field-self','Absolute awareness'];const svg=document.getElementById('main'),NS='http://www.w3.org/2000/svg',G={bg:$('#bg'),ghost:$('#ghost'),edges:$('#edges'),overlay:$('#overlay'),nodes:$('#nodes'),labels:$('#labels')};function $(s){return document.querySelector(s)}function E(tag,a={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e}function clear(){Object.values(G).forEach(g=>g.replaceChildren())}function clamp(x,a=0,b=1){return Math.max(a,Math.min(b,x))}function sig(x){return 1/(1+Math.exp(-x))}function rnd(n){const x=Math.sin(n*91.17+11.3)*43758.5453;return x-Math.floor(x)}function txt(x,y,s,sz=11,anchor='middle',fill='#97a3b3',w='400'){const t=E('text',{x,y,'text-anchor':anchor,'font-size':sz,fill,'font-weight':w});t.textContent=s;G.labels.appendChild(t);return t}function ln(a,b,w=.7,o=.3,c='#97a3b3',dash=''){const e=E('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:c,'stroke-width':w,'stroke-opacity':o});if(dash)e.setAttribute('stroke-dasharray',dash);G.edges.appendChild(e);return e}function wt(base,type,t,p){const K=sig((t-28)/7),St=sig((t-20)/5),Li=sig((t-48)/5),Pe=sig((t-68)/5);let m=1;if(type==='struct')m=St;if(type==='self')m=Li;if(type==='persp'||type==='ref')m=Pe;if(type==='cross')m=.55*(1-.25*K);let w=base*m+.2*K*((.5+.5*Math.sin((t+p)*.31))-.35);if(type==='fluid')w+=.18*(1-K)*Math.sin(t*.7+p);return clamp(w,.02,.98)}function graph(n=30){const nodes=[];for(let i=0;i<n;i++){let r='fluid';if(i>8)r='struct';if(i>19)r='self';if(i>24)r='persp';nodes.push({id:'v'+i,label:'v'+i,regime:r})}const edges=[];for(let i=0;i<n;i++){edges.push({a:'v'+i,b:'v'+((i+1)%n),type:i<9?'fluid':i<20?'struct':i<25?'self':'persp',base:.45+.25*rnd(i),phase:i});if(i%2===0)edges.push({a:'v'+i,b:'v'+((i+4)%n),type:i<9?'fluid':'struct',base:.22+.3*rnd(i+20),phase:i+8})}edges.forEach(e=>e.w=wt(e.base,e.type,S.tau,e.phase));return{nodes,edges}}function nested(){const nodes=[],edges=[];for(let i=0;i<9;i++)nodes.push({id:'s'+i,label:'n'+i,regime:S.scale<5?'struct':S.scale<7?'self':'persp'});if(S.scale<8)nodes.push({id:'next',label:scales[S.scale+1]+' ⊕',regime:'agg',aggregate:true});for(let i=0;i<9;i++){edges.push({a:'s'+i,b:'s'+((i+1)%9),type:S.scale<5?'struct':S.scale<7?'self':'persp',base:.65,phase:i});if(i%2===0)edges.push({a:'s'+i,b:'s'+((i+3)%9),type:'struct',base:.4,phase:i+5});if(S.scale<8&&i%3===0)edges.push({a:'s'+i,b:'next',type:'cross',base:.3,phase:i+9})}edges.forEach(e=>e.w=wt(e.base,e.type,S.tau,e.phase));return{nodes,edges}}function perspectives(){const nodes=[],edges=[];for(let c=0;c<3;c++){nodes.push({id:'c'+c,label:'P'+(c+1),regime:'persp',center:true,cluster:c});for(let j=0;j<7;j++){const id='p'+c+'_'+j;nodes.push({id,label:'',regime:'persp',cluster:c});edges.push({a:id,b:'c'+c,type:'ref',base:.78,phase:j+c*4});edges.push({a:id,b:'p'+c+'_'+((j+1)%7),type:'persp',base:.55,phase:j+12+c})}}edges.push({a:'c0',b:'c1',type:'cross',base:.12,phase:31},{a:'c1',b:'c2',type:'cross',base:.11,phase:34},{a:'c0',b:'c2',type:'cross',base:.08,phase:39});edges.forEach(e=>e.w=wt(e.base,e.type,S.tau,e.phase));return{nodes,edges}}function layout(g){const p=new Map(),cx=470,cy=268;g.nodes.forEach((n,i)=>{const a=2*Math.PI*i/g.nodes.length+rnd(i+S.scale)*.35,r=150+85*rnd(i*7+3);p.set(n.id,{x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,vx:0,vy:0})});for(let it=0;it<100;it++){const A=.09*(1-it/115);for(let i=0;i<g.nodes.length;i++)for(let j=i+1;j<g.nodes.length;j++){const a=p.get(g.nodes[i].id),b=p.get(g.nodes[j].id);let dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy+35,d=Math.sqrt(d2),f=8000/d2;dx/=d;dy/=d;a.vx-=dx*f;a.vy-=dy*f;b.vx+=dx*f;b.vy+=dy*f}g.edges.forEach(e=>{const a=p.get(e.a),b=p.get(e.b);let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)+.001,des=42+135*(1-e.w),f=(d-des)*(.017+.05*e.w);dx/=d;dy/=d;a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f});g.nodes.forEach(n=>{const a=p.get(n.id);a.vx+=(cx-a.x)*.0014;a.vy+=(cy-a.y)*.0014;a.x+=a.vx*A;a.y+=a.vy*A;a.vx*=.68;a.vy*=.68;a.x=clamp(a.x,38,902);a.y=clamp(a.y,42,490)})}return p}function boundary(g,c){const set=new Set(g.nodes.filter(n=>n.cluster===c).map(n=>n.id));let wi=0,wo=0;g.edges.forEach(e=>{const a=set.has(e.a),b=set.has(e.b);if(a&&b)wi+=e.w;else if(a||b)wo+=e.w});return wi/(wi+wo+.001)}function metrics(g){let d=0,inside=0,cross=0,ref=0;g.edges.forEach(e=>{d+=Math.abs(e.w-wt(e.base,e.type,Math.max(0,S.tau-1),e.phase));if(e.type==='cross')cross+=e.w;else inside+=e.w;if(e.type==='ref')ref+=e.w});const P=clamp(1-d/Math.max(1,g.edges.length)*5),K=sig((S.tau-28)/7),R=inside/(inside+cross+.001),I=clamp(inside/Math.max(1,g.nodes.length)*.22),Ref=clamp(ref/7),B=clamp(R*(.45+.55*I));return{P,K,R,I,Ref,B}}function draw(g,multi=false){const p=layout(g);g.edges.forEach(e=>{const a=p.get(e.a),b=p.get(e.b),eL=ln(a,b,.55+3.1*e.w,.1+.75*e.w,e.type==='ref'?'#d27c98':e.type==='self'?'#c9955d':'#97a3b3',e.w<.25?'3 5':'');if(e.type==='ref'){eL.setAttribute('marker-end','url(#arr)');eL.style.color='#d27c98'}});if(multi)for(let c=0;c<3;c++){const x=p.get('c'+c),b=boundary(g,c),r=58+48*b;G.bg.appendChild(E('circle',{cx:x.x,cy:x.y,r,fill:'url(#gradP)'}));G.overlay.appendChild(E('circle',{cx:x.x,cy:x.y,r,fill:'none',stroke:'#d27c98','stroke-opacity':(.08+.35*b),'stroke-width':(.6+1.8*b),'stroke-dasharray':'3 5'}));txt(x.x,x.y-r-7,'β='+b.toFixed(2),9)}g.nodes.forEach(n=>{const a=p.get(n.id),r=n.aggregate?14:n.center?8:5.3,c=n.regime==='fluid'?'#97a3b3':n.regime==='struct'?'#6f91c7':n.regime==='self'?'#c9955d':n.regime==='agg'?'#aa8dce':'#d27c98';const gr=E('g',{class:'node'+(S.selected===n.id?' selected':''),tabindex:'0'});gr.appendChild(E('circle',{class:'sel',cx:a.x,cy:a.y,r:r+5}));gr.appendChild(E('circle',{cx:a.x,cy:a.y,r,fill:c,'fill-opacity':n.aggregate?.9:.72,stroke:'#edf2f7','stroke-opacity':'.25'}));gr.onclick=()=>{S.selected=n.id;$('#info').textContent=(n.label||n.id)+'\nregime: '+n.regime+(n.center?'\nrole: relational reference center':'')+(n.aggregate?'\nsemantic role: effective node representing a deeper graph':'');render()};gr.ondblclick=()=>{if(n.aggregate&&S.scale<8){S.scale++;$('#scale').value=S.scale;S.mode='nested';render()}};G.nodes.appendChild(gr);if(n.label)txt(a.x,a.y+r+15,n.label,n.aggregate?11:9)});return p}function stage(){if(S.tau<18)return 0;if(S.tau<35)return 1;if(S.tau<52)return 2;if(S.tau<68)return 3;return 4}function chainStage(){if(S.tau<64)return 0;if(S.tau<72)return 1;if(S.tau<80)return 2;if(S.tau<89)return 3;return 4}function setSide(m){const arr=[['Persistence P',m.P],['Constraint κ',m.K],['Closure ρ',m.R],['Integration I',m.I],['Reference R',m.Ref],['Boundary β',m.B]];$('#metrics').innerHTML=arr.map(([n,v])=>`<div class="metric"><span>${n}</span><div class="bar"><span style="width:${(v*100).toFixed(0)}%"></span></div><b>${v.toFixed(2)}</b></div>`).join('');$('#phasePoint').setAttribute('cx',34+204*m.K);$('#phasePoint').setAttribute('cy',150-132*clamp((m.Ref+m.I)/2));const cs=['Memory','Continuity','Self-model','Reflective self-awareness','Narrative ego'],idx=chainStage();$('#chain').innerHTML=cs.map((x,i)=>`<div class="${i<=idx?'on':''}">${x}</div>`).join('')}function manifestation(){const g=graph(),p=draw(g),m=metrics(g),names=['Difference / relation','Transformation / repetition','Constraint / stability','Thinghood / matter-like persistence','Nested organization'];$('#modeTitle').textContent='Manifestation engine';$('#modeDesc').textContent=names[stage()]+'. Geometry is projected from current relation weights rather than treated as a pre-existing container.';txt(20,24,'Awareness is not a vertex; this panel begins at manifested distinction.',10,'start');if(S.tau>40)g.edges.filter(e=>e.w>.64).forEach(e=>{const a=p.get(e.a),b=p.get(e.b);G.bg.appendChild(E('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#aa8dce','stroke-width':8,'stroke-opacity':.025+.1*m.P}))});return{g,m}}function nestedMode(){const g=nested();draw(g);$('#modeTitle').textContent='Recursive nested reality';$('#modeDesc').textContent='Each effective node can resolve into a finer relational graph. Planetary environment is a distinct scale.';$('#crumbs').innerHTML=scales.slice(0,S.scale+1).map(x=>`<span class="crumb">${x}</span>`).join('');txt(470,25,scales[S.scale]+' — effective relational organization',12,'middle','#edf2f7','600');return{g,m:metrics(g)}}function perspective(){const g=perspectives(),p=draw(g,true);$('#modeTitle').textContent='One field, multiple local perspectives';$('#modeDesc').textContent='Boundary strength is a relational gradient β from internal versus external coupling, not an absolute wall.';if(S.here)for(let c=0;c<3;c++){const a=p.get('c'+c);G.overlay.appendChild(E('circle',{cx:a.x,cy:a.y,r:15,fill:'none',stroke:'#d27c98','stroke-width':2,'stroke-opacity':.65}));txt(a.x,a.y-20,'HERE',9)}return{g,m:metrics(g)}}function identity(){const g=perspectives(),p=draw(g,true);$('#modeTitle').textContent='HERE / NOW / I — identity formation';$('#modeDesc').textContent='Memory, continuity, self-modeling, reflective self-awareness, and narrative integration transform a viewpoint into a personal self.';const a=p.get('c0');if(S.here){G.overlay.appendChild(E('circle',{cx:a.x,cy:a.y,r:18,fill:'none',stroke:'#d27c98','stroke-width':2}));txt(a.x,a.y-25,'HERE = reference center',9)}if(S.now)txt(20,500,'NOW = currently enacted relational configuration Gτ',10,'start');if(S.I){const ss=['Memory','Continuity','Self-model','Reflective self-awareness','Narrative ego'],y=74;ss.forEach((s,i)=>{const x=150+i*160,on=i<=chainStage();G.overlay.appendChild(E('circle',{cx:x,cy:y,r:on?8:5,fill:on?'#d27c98':'#2b3440'}));txt(x,y-15,s,9);if(i<4){const e=E('line',{x1:x+10,y1:y,x2:x+150,y2:y,stroke:'#d27c98','stroke-opacity':on?.55:.15,'stroke-width':1.2});e.setAttribute('marker-end','url(#arr)');e.style.color='#d27c98';G.overlay.appendChild(e)}});txt(a.x-110,a.y+62,'I = persistent self-referential trajectory',9)}return{g,m:metrics(g)}}function constraint(){const K=sig((S.tau-28)/7),Iso=sig((S.tau-62)/6);$('#modeTitle').textContent='Constraint density state-space';$('#modeDesc').textContent='Existential modes are regimes of transformation constraint and perspective isolation, not spatially stacked worlds.';G.bg.appendChild(E('rect',{x:160,y:85,width:620,height:340,rx:12,fill:'#151b23',stroke:'#2b3440'}));const a={x:205,y:380},b={x:735,y:380},c={x:205,y:125};ln(a,b,1,.8,'#2b3440');ln(a,c,1,.8,'#2b3440');txt(470,412,'Transformation constraint →',11);const yy=txt(165,250,'Perspective isolation →',11);yy.setAttribute('transform','rotate(-90 165 250)');txt(245,350,'fluid / weak persistence',9);txt(650,350,'matter-like stability',9);txt(632,160,'embodied localization',9);G.overlay.appendChild(E('circle',{cx:205+530*K,cy:380-255*Iso,r:10,fill:'#60b3aa'}));return{g:graph(8),m:{P:K,K,R:K,I:Iso,Ref:Iso,B:(K+Iso)/2}}}function recognition(){const cx=470,cy=270,rs=[36,68,108,154,205,258];$('#modeTitle').textContent='Recognition / expansion of identity';$('#modeDesc').textContent='No entity travels toward a source. The referent of “I” widens while the localized pattern remains.';for(let i=5;i>=0;i--){G.bg.appendChild(E('circle',{cx,cy,r:rs[i],fill:i<S.breadth?'url(#gradF)':'none',stroke:'#2b3440','stroke-opacity':i<S.breadth?.55:.22,'stroke-dasharray':i===5?'5 6':''}));txt(cx+rs[i]+6,cy,ids[i],9,'start')}G.nodes.appendChild(E('circle',{cx,cy,r:8,fill:'#d27c98'}));txt(cx,cy+24,'localized perspective',9);txt(470,28,'J₁ ⊂ J₂ ⊂ J₃ ⊂ J₄ ⊂ J₅ — widening identification, not spatial travel',11);return{g:graph(8),m:{P:.85,K:.72,R:.74,I:.8,Ref:.84,B:.77}}}function hypothesis(){const cards=[['Embodied de-localization','Loss of one major localization architecture at death.'],['Post-bodily persistence','Would require coherence, continuity, memory-like structure, and boundary.'],['Re-localization','Compatible only if a pattern can anchor to another embodied constraint system.']];$('#modeTitle').textContent='Hypothesis layer';$('#modeDesc').textContent='Conditional possibilities, not established consequences.';cards.forEach((c,i)=>{const y=85+i*135;G.bg.appendChild(E('rect',{x:170,y,width:600,height:96,rx:12,fill:'#151b23',stroke:'#2b3440','stroke-dasharray':'5 5'}));txt(190,y+27,'HYPOTHESIS',9,'start','#97a3b3','700');txt(190,y+50,c[0],13,'start','#edf2f7','600');txt(190,y+72,c[1],10,'start')});return{g:graph(8),m:{P:.5,K:.5,R:.5,I:.5,Ref:.5,B:.5}}}function comparison(){const rows=[['Relationality','Relational quantum mechanics'],['Perspective-relative description','Quantum reference frames'],['Emergent geometry','Holography / information geometry'],['Relational time','Page–Wootters-type approaches'],['Background independence','Loop quantum gravity']];$('#modeTitle').textContent='Optional physics comparison layer';$('#modeDesc').textContent='Structural parallels only; none is evidence that physics has established awareness-first ontology.';rows.forEach((r,i)=>{const y=78+i*79;G.bg.appendChild(E('rect',{x:145,y,width:650,height:57,rx:9,fill:'#151b23',stroke:'#2b3440'}));txt(170,y+23,r[0],11,'start','#edf2f7','600');txt(470,y+23,'↔',11);txt(770,y+23,r[1],10,'end');txt(170,y+43,'structural analogy, not identity or proof',8,'start')});return{g:graph(8),m:{P:.7,K:.55,R:.6,I:.5,Ref:.4,B:.55}}}const formulas={manifestation:'Gτ=(V,E,Wτ)\nΦτ:Gτ→Gτ+1\nTime = order(Φ)\ndG(u,v)=min Σ1/(wij+ε)\nμ(C)=P(C)κ(C)',nested:'vC ⇄ G[C]\nCosmos→Galaxy→Stellar→Planetary System→Planetary Environment→Biosphere→Organism→Nervous System→Perspective',perspective:'ρ(C)=Win/(Win+Wout)\nβ(C)=relative internal dominance\nBoundary = gradient, not wall\nHERE = relational reference center',identity:'Memory→Continuity→Self-model→Reflective self-awareness→Narrative ego\nNOW = Gτ\nI={Cτ₀,Cτ₁,…}',constraint:'x = transformation constraint\ny = perspective isolation\nexistential density = constrained transformation + localization',recognition:'J₁⊂J₂⊂J₃⊂J₄⊂J₅\nreturn = expansion of identity referent\nnot spatial travel',hypothesis:'No asserted dynamical law.\nConditional possibilities only.',comparison:'Physics analogues ≠ ontology proof.\nComparison layer is interpretive context.'};function timeline(){const t=$('#timeline');if(!t.children.length)for(let i=0;i<=50;i++)t.appendChild(document.createElement('span'));[...t.children].forEach((x,i)=>x.classList.toggle('on',i<=Math.round(S.tau/2)))}function render(){clear();$('#crumbs').innerHTML='';let o=S.mode==='manifestation'?manifestation():S.mode==='nested'?nestedMode():S.mode==='perspective'?perspective():S.mode==='identity'?identity():S.mode==='constraint'?constraint():S.mode==='recognition'?recognition():S.mode==='hypothesis'?hypothesis():comparison();setSide(o.m);$('#formula').textContent=formulas[S.mode];timeline();[...document.querySelectorAll('#modes button')].forEach(b=>b.classList.toggle('active',b.dataset.mode===S.mode))}const m=$('#modes');m.innerHTML=modes.map(x=>`<button data-mode="${x}">${modeLabels[x]}</button>`).join('');m.onclick=e=>{if(e.target.dataset.mode){S.mode=e.target.dataset.mode;render()}};$('#scale').innerHTML=scales.map((x,i)=>`<option value="${i}">${x}</option>`).join('');$('#scale').onchange=e=>{S.scale=+e.target.value;S.mode='nested';render()};$('#tau').oninput=e=>{S.tau=+e.target.value;$('#tauOut').value=S.tau;render()};$('#breadth').oninput=e=>{S.breadth=+e.target.value;$('#breadthOut').value=S.breadth;S.mode='recognition';render()};$('#play').onclick=()=>{S.playing=!S.playing;$('#play').textContent=S.playing?'Pause':'Play';clearInterval(S.timer);if(S.playing)S.timer=setInterval(()=>{S.tau=(S.tau+1)%101;$('#tau').value=S.tau;$('#tauOut').value=S.tau;render()},500)};$('#step').onclick=()=>{S.tau=Math.min(100,S.tau+1);$('#tau').value=S.tau;$('#tauOut').value=S.tau;render()};[['here','here'],['now','now'],['iBtn','I']].forEach(([id,k])=>$('#'+id).onclick=()=>{S[k]=!S[k];$('#'+id).classList.toggle('active',S[k]);render()});$('#reset').onclick=()=>{clearInterval(S.timer);Object.assign(S,{mode:'manifestation',tau:0,scale:0,breadth:1,playing:false,timer:null,here:true,now:true,I:true,selected:null});$('#tau').value=0;$('#tauOut').value=0;$('#scale').value=0;$('#breadth').value=1;$('#breadthOut').value=1;$('#play').textContent='Play';['here','now','iBtn'].forEach(x=>$('#'+x).classList.add('active'));render()};render()})();
-</script>
-</body></html>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Relational Consciousness Ontology · Visual formalization</p>
+        <h1>Relational State-Space Atlas</h1>
+        <p class="subtitle">A structural simulation of how changing relations can form constraints, persistent nested nodes, and local functional identity.</p>
+      </div>
+      <div class="status"><i></i><span id="stateLabel">Live structural simulation</span></div>
+    </header>
+
+    <section class="shell" aria-label="Interactive relational state-space atlas">
+      <section class="atlas" aria-label="Animated relational field">
+        <canvas id="field" aria-label="Dynamic relational field showing nodes and connections"></canvas>
+        <div class="field-label"><strong>Relational field</strong><span id="fieldCaption">42 changing elements · typed coupling · scale-relative organization</span></div>
+        <div class="phase-banner" aria-live="polite">
+          <h2 id="phaseTitle">1. Difference</h2>
+          <p id="phaseText">Elements become distinguishable. The simulation begins with differences, not with separate substances.</p>
+        </div>
+        <div class="node-tip" id="nodeTip"></div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="card wide">
+          <h2>Existence lens</h2>
+          <div class="phases" id="phases"></div>
+        </section>
+
+        <section class="card">
+          <h2>Field controls</h2>
+          <div class="controls">
+            <label class="control-label">Constraint <output id="constraintValue">62%</output><input id="constraint" type="range" min="0" max="100" value="62"></label>
+            <label class="control-label">Cross-boundary coupling <output id="couplingValue">34%</output><input id="coupling" type="range" min="0" max="100" value="34"></label>
+            <label class="control-label">Retention / memory <output id="memoryValue">71%</output><input id="memory" type="range" min="0" max="100" value="71"></label>
+            <div class="transport"><button class="play" id="play">Pause</button><button id="reset">Reset</button></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Selected node · structural indicators</h2>
+          <div class="metric-grid" aria-live="polite">
+            <div class="metric"><span>Boundary</span><b id="metricB">0.31</b><small>relative gradient b</small></div>
+            <div class="metric"><span>Closure</span><b id="metricK">0.72</b><small>coupling ratio κ</small></div>
+            <div class="metric"><span>Persistence</span><b id="metricP">0.68</b><small>macrostate p</small></div>
+            <div class="metric"><span>Access locality</span><b id="metricL">0.66</b><small>functional λ</small></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Reading the atlas</h2>
+          <div class="legend">
+            <div><span class="swatch" style="background:var(--violet)"></span><span>Changing elements and relations</span></div>
+            <div><span class="swatch" style="background:var(--aqua)"></span><span>Selected persistent organization</span></div>
+            <div><span class="swatch" style="background:var(--amber)"></span><span>Embodied access / memory trajectory</span></div>
+          </div>
+        </section>
+
+        <section class="card wide notice">
+          <strong>Boundary of the simulation:</strong> it visualizes PRSF-DN structural relations. It does not measure awareness or generate a phenomenal subject. CFI appears only as a metaphysical interpretation.
+        </section>
+      </aside>
+    </section>
+    <p class="footer">Move your pointer through the field to inspect elements. Choose a phase to change the explanatory lens; the same field is read differently as organization becomes more constrained and locally integrated.</p>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('field');
+      const ctx = canvas.getContext('2d');
+      const atlas = document.querySelector('.atlas');
+      const phaseHost = document.getElementById('phases');
+      const phaseTitle = document.getElementById('phaseTitle');
+      const phaseText = document.getElementById('phaseText');
+      const fieldCaption = document.getElementById('fieldCaption');
+      const stateLabel = document.getElementById('stateLabel');
+      const tip = document.getElementById('nodeTip');
+      const play = document.getElementById('play');
+      const reset = document.getElementById('reset');
+      const inputs = { constraint: document.getElementById('constraint'), coupling: document.getElementById('coupling'), memory: document.getElementById('memory') };
+      const outputs = { constraint: document.getElementById('constraintValue'), coupling: document.getElementById('couplingValue'), memory: document.getElementById('memoryValue') };
+      const metricEls = { b: document.getElementById('metricB'), k: document.getElementById('metricK'), p: document.getElementById('metricP'), l: document.getElementById('metricL') };
+      const phases = [
+        { name: 'Difference', text: 'Elements become distinguishable. The simulation begins with differences, not with separate substances.', caption: 'Distinguishability · state variation · no node claim yet' },
+        { name: 'Relation', text: 'Differences are linked by changing, typed relations. The visible web is not space itself; it is a model of coupling.', caption: 'Typed coupling · transformation · relational field' },
+        { name: 'Constraint', text: 'Repeated relational influence restricts some transitions. Constraint is modeled as patterned tendency, not as an external command.', caption: 'Recurrent influence · constrained transition space' },
+        { name: 'Structural node', text: 'Where internal coupling, persistence, and robustness become relatively stronger, a scale-relative node can be modeled.', caption: 'Boundary gradient b · closure κ · persistence p' },
+        { name: 'Access localization', text: 'A selected embodied organization preferentially retains and uses information along its own trajectory. This is functional locality, not a consciousness measure.', caption: 'Retention ρ · access locality λ · embodied trajectory' },
+        { name: 'Identity', text: 'Memory, self-related control, and ongoing action make a functional identity. A local subject would require the separate M4 bridge hypothesis.', caption: 'Memory · self-model · functional identity · M4 remains open' },
+        { name: 'Interpretation', text: 'CFI reads the whole field as grounded in awareness. This final lens is metaphysical: the simulation neither proves nor measures it.', caption: 'Consciousness-First Interpretation · metaphysical, non-measured' }
+      ];
+      const palette = { aqua: '#63e8d2', violet: '#9780ff', amber: '#ffbf6d', rose: '#ff7da1', white: '#f6f8ff' };
+      let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2), running = true, phase = 0, time = 0, pointer = null;
+      let nodes = [], trails = [], clusters = [];
+      const count = 42;
+
+      function rnd(seed) { const x = Math.sin(seed * 999.91) * 43758.5453; return x - Math.floor(x); }
+      function makeClusters() {
+        clusters = [
+          { x: W * .34, y: H * .40, r: Math.min(W,H) * .17, label: 'Node A' },
+          { x: W * .67, y: H * .35, r: Math.min(W,H) * .14, label: 'Node B' },
+          { x: W * .61, y: H * .70, r: Math.min(W,H) * .13, label: 'Embodied local node' }
+        ];
+      }
+      function seed() {
+        makeClusters(); nodes = []; trails = [];
+        for (let i = 0; i < count; i++) {
+          const a = rnd(i+2) * Math.PI * 2, r = 55 + rnd(i+5) * Math.min(W,H) * .36;
+          const group = i < 16 ? 0 : i < 29 ? 1 : 2;
+          const c = clusters[group];
+          nodes.push({ i, group, x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r, vx: (rnd(i+8)-.5)*1.4, vy: (rnd(i+11)-.5)*1.4, memory: [], pulse: rnd(i+17) });
+        }
+      }
+      function resize() {
+        const rect = atlas.getBoundingClientRect(); W = rect.width; H = rect.height;
+        canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr); canvas.style.width = W+'px'; canvas.style.height = H+'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0); seed();
+      }
+      function currentParams() { return { constraint: +inputs.constraint.value/100, coupling: +inputs.coupling.value/100, memory: +inputs.memory.value/100 }; }
+      function updateOutputs() { Object.keys(inputs).forEach(k => outputs[k].textContent = inputs[k].value + '%'); }
+      function setPhase(index) {
+        phase = index;
+        [...phaseHost.children].forEach((el,i) => el.classList.toggle('active', i===phase));
+        const p = phases[phase]; phaseTitle.textContent = `${phase+1}. ${p.name}`; phaseText.textContent = p.text; fieldCaption.textContent = p.caption;
+        const presets = [[18,18,12],[30,40,20],[68,35,34],[80,26,55],[72,34,76],[75,26,88],[64,44,72]][phase];
+        ['constraint','coupling','memory'].forEach((k,i)=>inputs[k].value=presets[i]); updateOutputs();
+      }
+      phases.forEach((p,i) => { const b=document.createElement('button'); b.className='phase-button'+(i===0?' active':''); b.type='button'; b.innerHTML=`<span class="phase-number">0${i+1}</span><span class="phase-name">${p.name}</span>`; b.addEventListener('click',()=>setPhase(i)); phaseHost.appendChild(b); });
+      Object.values(inputs).forEach(input=>input.addEventListener('input',updateOutputs));
+      play.addEventListener('click',()=>{ running=!running; play.textContent=running?'Pause':'Play'; stateLabel.textContent=running?'Live structural simulation':'Simulation paused'; });
+      reset.addEventListener('click',()=>{ seed(); time=0; });
+      canvas.addEventListener('pointermove', e=>{ const r=canvas.getBoundingClientRect(); pointer={x:e.clientX-r.left,y:e.clientY-r.top}; });
+      canvas.addEventListener('pointerleave',()=>{ pointer=null; tip.style.display='none'; });
+
+      function metrics(p) {
+        const maturity = phase/6;
+        return { b: Math.min(.92, .08 + p.constraint*.43 + maturity*.25), k: Math.min(.96, .25 + p.constraint*.42 - p.coupling*.13 + maturity*.19), p: Math.min(.96, .08 + p.constraint*.34 + p.memory*.27 + maturity*.21), l: Math.min(.96, .06 + p.memory*.49 + (phase>=4?.2:0) - p.coupling*.08) };
+      }
+      function drawBackground() {
+        const g=ctx.createRadialGradient(W*.5,H*.48,0,W*.5,H*.48,Math.max(W,H)*.67); g.addColorStop(0,'rgba(62,75,145,.17)'); g.addColorStop(.55,'rgba(17,26,53,.09)'); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+        ctx.strokeStyle='rgba(174,193,225,.07)'; ctx.lineWidth=1;
+        for(let x=28;x<W;x+=54){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+        for(let y=30;y<H;y+=54){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+      }
+      function update(p) {
+        const structured = Math.max(0,(phase-1)/5);
+        nodes.forEach((n,idx)=>{
+          const c=clusters[n.group];
+          const dx=c.x-n.x, dy=c.y-n.y;
+          const dist=Math.hypot(dx,dy)+.1;
+          const pull=(.003+structured*.011+p.constraint*.006)*Math.min(dist,240);
+          n.vx += dx/dist*pull; n.vy += dy/dist*pull;
+          n.vx += Math.sin(time*.012+n.i*1.7)*.011; n.vy += Math.cos(time*.014+n.i*1.2)*.011;
+          if(phase<2){ n.vx += (n.x-W*.5)*.00055; n.vy += (n.y-H*.5)*.00055; }
+          n.vx*=.94; n.vy*=.94; n.x+=n.vx; n.y+=n.vy;
+          if(n.x<14||n.x>W-14)n.vx*=-1; if(n.y<14||n.y>H-14)n.vy*=-1;
+          n.x=Math.max(14,Math.min(W-14,n.x)); n.y=Math.max(14,Math.min(H-14,n.y));
+          if(n.group===2 && phase>=4){ n.memory.push({x:n.x,y:n.y,a:1}); if(n.memory.length>Math.floor(5+p.memory*25))n.memory.shift(); }
+        });
+      }
+      function drawRelations(p) {
+        const reach = 110 + p.coupling*100 + phase*6;
+        for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+          const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y); if(d>reach) continue;
+          const same=a.group===b.group; const activity=(1-d/reach)*(same?.86:(.25+p.coupling*.4));
+          if(activity<.08)continue;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineWidth=same?1.05:.65;
+          ctx.strokeStyle=same?`rgba(151,128,255,${activity*.46})`:`rgba(130,164,225,${activity*.24})`;ctx.stroke();
+        }
+      }
+      function drawClusters(p) {
+        if(phase<3) return;
+        clusters.forEach((c,idx)=>{
+          const active=idx===2&&phase>=4; const scale=.72+p.constraint*.32+(idx===2?p.memory*.12:0);
+          ctx.beginPath();ctx.ellipse(c.x,c.y,c.r*scale,c.r*scale*.74,idx*.38,0,Math.PI*2);
+          ctx.fillStyle=active?'rgba(255,191,109,.055)':'rgba(99,232,210,.035)';ctx.fill();
+          ctx.lineWidth=active?1.8:1;ctx.setLineDash(active?[5,7]:[3,8]);ctx.strokeStyle=active?'rgba(255,191,109,.72)':'rgba(99,232,210,.38)';ctx.stroke();ctx.setLineDash([]);
+          if(phase>=4||idx!==2){ctx.fillStyle=active?palette.amber:palette.aqua;ctx.font='12px Inter, system-ui';ctx.fillText(c.label,c.x-c.r*.46,c.y-c.r*scale*.78-8);}
+        });
+      }
+      function drawMemory(p) {
+        if(phase<4)return;
+        nodes.filter(n=>n.group===2).forEach(n=>{
+          n.memory.forEach((m,i)=>{const a=(i+1)/n.memory.length*.24*p.memory;ctx.beginPath();ctx.arc(m.x,m.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,191,109,${a})`;ctx.fill();});
+        });
+      }
+      function drawNodes(p) {
+        const selectedGroup=phase>=4?2:-1;
+        nodes.forEach(n=>{
+          const selected=n.group===selectedGroup; const size=selected?4.6:3.3;
+          const halo=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,size*4); halo.addColorStop(0,selected?'rgba(255,191,109,.52)':'rgba(151,128,255,.42)');halo.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=halo;ctx.fillRect(n.x-size*4,n.y-size*4,size*8,size*8);
+          ctx.beginPath();ctx.arc(n.x,n.y,size,0,Math.PI*2);ctx.fillStyle=selected?palette.amber:phase>=3?palette.aqua:palette.violet;ctx.fill();
+        });
+      }
+      function inspect(p) {
+        if(!pointer)return; let closest=null,best=16;
+        nodes.forEach(n=>{const d=Math.hypot(n.x-pointer.x,n.y-pointer.y);if(d<best){best=d;closest=n;}});
+        if(!closest){tip.style.display='none';return;}
+        const nodeName=closest.group===2?'Embodied local node':`Structural node ${closest.group===0?'A':'B'}`;
+        tip.style.display='block';tip.style.left=Math.min(pointer.x+14,W-195)+'px';tip.style.top=Math.min(pointer.y+14,H-105)+'px';
+        tip.innerHTML=`<b>${nodeName}</b><br>element ${String(closest.i+1).padStart(2,'0')} · relation state ${closest.group===2?'locally retained':'dynamically coupled'}<br><span style="color:#9ba8bb">This is a modeled element, not a conscious unit.</span>`;
+      }
+      function loop() {
+        if(running){time++; const p=currentParams(); update(p);}
+        const p=currentParams(), m=metrics(p); ctx.clearRect(0,0,W,H); drawBackground(); drawRelations(p); drawClusters(p); drawMemory(p); drawNodes(p); inspect(p);
+        metricEls.b.textContent=m.b.toFixed(2);metricEls.k.textContent=m.k.toFixed(2);metricEls.p.textContent=m.p.toFixed(2);metricEls.l.textContent=m.l.toFixed(2);
+        requestAnimationFrame(loop);
+      }
+      window.addEventListener('resize',resize); resize(); updateOutputs(); loop();
+    })();
+  </script>
+</body>
+</html>
